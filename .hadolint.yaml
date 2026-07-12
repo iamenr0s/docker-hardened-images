@@ -1,4 +1,5 @@
 ignored:
   - DL3008   # pin versions in apt-get install: rootfs is snapshot-driven
+  - DL3059   # consecutive RUNs are in discarded bootstrap stages; final images are COPY-from-scratch
 trustedRegistries:
   - docker.io
