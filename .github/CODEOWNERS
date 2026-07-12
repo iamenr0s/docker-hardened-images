@@ -1,0 +1,18 @@
+# Requires "Require review from Code Owners" in branch protection to take effect.
+#
+# Everything that can change WHAT gets built, gated, or signed needs a human
+# review before it reaches main (a push to main publishes signed images).
+# images/<distro>/<version>/env is deliberately NOT owned: the daily
+# snapshot-bump PR only touches env files, so it can auto-merge unattended
+# and security patches keep shipping within 24h.
+#
+# Replace @CHANGEME with the repo owner/team (same placeholder convention
+# as Makefile / scripts/build.sh).
+
+/.github/               @CHANGEME
+/scripts/               @CHANGEME
+/policies/              @CHANGEME
+/tests/                 @CHANGEME
+/Makefile               @CHANGEME
+/images/common/         @CHANGEME
+/images/**/Dockerfile   @CHANGEME

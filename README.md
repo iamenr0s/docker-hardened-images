@@ -1,0 +1,198 @@
+# hardened-images
+
+A collection of minimal, hardened container base images built from scratch,
+targeting **near-zero CVEs** through aggressive minimisation, reproducible
+pinned builds, and a fully automated patch pipeline. All images are
+multi-arch (**amd64 + arm64**), signed with **cosign**, and ship with
+**syft** SBOMs attached as attestations.
+
+Published to **Docker Hub** and **Quay.io** with identical multi-arch manifests.
+
+---
+
+## Image catalog
+
+| Distro | Versions | Flavors | Tags |
+|---|---|---|---|
+| Debian | 12 (bookworm), 13 (trixie) | `full`, `micro` | `12`, `12-full`, `12-micro`, `bookworm`, `13`, `13-full`, `13-micro`, `trixie`, `latest` |
+
+Version tags without a flavor suffix (e.g. `12`, `latest`) point to **micro**.
+Fedora, AlmaLinux and Ubuntu follow next — see [Adding a distro](#adding-a-distro).
+
+## Flavors
+
+| | `micro` (default) | `full` |
+|---|---|---|
+| Shell | ❌ removed | ✅ bash |
+| Package manager | ❌ apt/dpkg binaries removed | ✅ apt (hardened defaults) |
+| User | `65532:65532` (nonroot) | root (so apt works in build stages) |
+| setuid/setgid binaries | ❌ zero | ❌ zero |
+| Package DB for scanners | ✅ `/var/lib/dpkg/status` kept | ✅ |
+| Intended use | final runtime base | build stages |
+
+The dpkg **status file is deliberately preserved in micro** so syft, grype
+and trivy can still inventory every installed package — minimisation never
+comes at the cost of scannability.
+
+### Typical usage
+
+```dockerfile
+FROM yourorg/debian-hardened:12-full AS build
+RUN apt-get update && apt-get install -y --no-install-recommends mytool
+
+FROM yourorg/debian-hardened:12
+COPY --from=build /usr/bin/mytool /usr/bin/mytool
+ENTRYPOINT ["/usr/bin/mytool"]
+```
+
+---
+
+## How near-zero CVEs is achieved
+
+1. **Minimal by construction** — rootfs built with
+   `debootstrap --variant=minbase`; docs, man pages, locales and caches
+   excluded permanently via dpkg path filters.
+2. **Patched at build time** — security updates applied inside the rootfs
+   from the archive, `-security` and `-updates` suites on every build.
+3. **Daily snapshot bump** — `update-snapshot.yml` opens a PR pinning a
+   newer snapshot each day; merging it (auto-merge recommended) ships
+   patched images within 24h, with the full CI gate in between.
+4. **Two-scanner gate** — CI fails on any **fixable** High/Critical
+   (grype, cross-checked by trivy). Unfixable CVEs are tracked, not hidden.
+5. **Continuous monitoring** — published images are rescanned every 6 hours;
+   new findings automatically open a labeled security issue.
+
+## Hardening applied
+
+- Built `FROM scratch` — no inherited layers, no surprise content
+- All setuid/setgid bits stripped (verified by structure tests)
+- root account locked; non-root user `65532` provided (distroless convention)
+- Network tooling removed (`curl`, `wget`, `nc`, `telnet`)
+- In micro: no shell, no login tooling, no apt/dpkg binaries, no perl
+- `Install-Recommends`/`Suggests` disabled; empty `/etc/machine-id`
+
+## Reproducible builds
+
+Every version pins a `SNAPSHOT` timestamp in `images/debian/<version>/env`.
+debootstrap and all apt sources resolve through
+`snapshot.debian.org/<timestamp>`, and file mtimes plus `SOURCE_DATE_EPOCH`
+are normalised to it. The same commit therefore rebuilds to the same package
+set with byte-comparable layers, and package changes only ever enter through
+an auditable snapshot-bump commit — never silently.
+
+Set `SNAPSHOT=` (empty) to build against live mirrors instead.
+
+## Supply chain security
+
+| Mechanism | Tool |
+|---|---|
+| SBOM (SPDX + CycloneDX) per image | syft |
+| CVE gate + continuous rescan | grype + trivy |
+| Keyless signing (Sigstore/Fulcio, GitHub OIDC) | cosign |
+| SBOM attached as in-registry attestation | cosign attest |
+| SLSA provenance (`mode=max`) | docker buildx |
+| CIS image lint / Dockerfile lint | dockle / hadolint |
+
+**Verify a published image:**
+
+```bash
+cosign verify \
+  --certificate-identity-regexp 'https://github.com/YOURORG/hardened-images/\.github/workflows/.+' \
+  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
+  docker.io/YOURORG/debian-hardened:12
+```
+
+Inspect the SBOM attestation — see `policies/cosign-verify.md` for the full commands.
+
+---
+
+## Automation (GitHub Actions)
+
+| Workflow | Trigger | Purpose |
+|---|---|---|
+| `pr.yml` | pull requests | hadolint + shellcheck, amd64 build, structure tests, SBOM, grype+trivy gate, dockle |
+| `release.yml` | push to `main` / manual | pre-push CVE gate, multi-arch build & push to Docker Hub + Quay, SBOM, cosign sign + attest + verify |
+| `update-snapshot.yml` | daily 01:00 UTC | bumps the pinned Debian snapshot, opens the patch PR |
+| `nightly.yml` | daily 02:17 UTC | rebuilds pinned images: fresh signatures, verifies reproducibility |
+| `rescan.yml` | every 6h | grype-scans published tags, opens security issues on findings |
+| `dependabot.yml` | weekly | pins/updates GitHub Actions and bootstrap image |
+
+**Patch lifecycle:** upstream fix → snapshot bump PR (01:00) → CI gate →
+merge → release build → signed multi-arch push → rescan confirms clean.
+
+## Local development
+
+Prerequisites: docker (buildx), hadolint, syft, grype, trivy,
+container-structure-test.
+
+```bash
+make help                                    # list targets
+make all                                     # lint, build, test, sbom, scan (debian 12 micro)
+make all VERSION=13 FLAVOR=full
+make scan VERSION=12 FLAVOR=micro            # grype + trivy gate only
+make push REGISTRIES="docker.io/you/debian-hardened quay.io/you/debian-hardened"
+scripts/update-snapshot.sh                   # bump pin to yesterday's snapshot
+scripts/update-snapshot.sh 20260701T000000Z  # pin an explicit timestamp
+```
+
+## Repository layout
+
+```
+images/
+  debian/
+    Dockerfile           shared multi-stage build (targets: full, micro)
+    12/env  13/env       per-version metadata: SUITE, EXTRA_TAGS, SNAPSHOT pin
+  common/
+    build-rootfs.sh      debootstrap minbase, snapshot-aware, reproducible
+    hardening.sh         setuid strip, root lock, micro minimisation
+scripts/
+  build.sh               buildx multi-arch build/push with tag fan-out
+  sbom.sh                syft SPDX + CycloneDX generation
+  scan.sh                grype + trivy gate (fails on fixable High/Critical)
+  sign.sh                cosign keyless sign + SBOM attest + verify
+  update-snapshot.sh     bump the pinned snapshot timestamp
+policies/
+  grype.yaml             gate config + documented CVE exceptions
+  trivy.yaml             trivy severity/unfixed settings
+  cosign-verify.md       end-user verification commands
+tests/debian/
+  micro.yaml full.yaml   container-structure-test specs (invariants)
+.github/workflows/       pr, release, update-snapshot, nightly, rescan
+.github/dependabot.yml   actions + docker pin updates
+Makefile                 local pipeline entry points
+docs/ADDING_A_DISTRO.md  contract for new distributions
+```
+
+## CI setup (one-time)
+
+1. Repository **variables**: `DOCKERHUB_ORG`, `QUAY_ORG`
+2. Create a **`release` environment** (Settings → Environments) holding the
+   secrets `DOCKERHUB_USERNAME`, `DOCKERHUB_TOKEN`, `QUAY_USERNAME`,
+   `QUAY_TOKEN`, with its **deployment branch policy restricted to `main`**
+   — no other branch or workflow can reach the push/signing credentials.
+   Optionally add required reviewers there to manually approve every publish
+   (at the cost of unattended patching).
+3. Replace the `CHANGEME` placeholders in `Makefile`, `scripts/build.sh`
+   and `.github/CODEOWNERS`
+4. Branch protection on `main`: require the `pr` checks **and review from
+   Code Owners**, then enable **auto-merge**. `.github/CODEOWNERS` covers
+   every path that changes what gets built or signed, but deliberately not
+   `images/<distro>/<version>/env` — so code changes need a human, while
+   daily snapshot-bump PRs (env-only diffs) auto-merge and ship patches
+   unattended within 24h
+5. Recommended: enable GitHub issue label `security` (used by `rescan.yml`)
+
+## CVE exceptions policy
+
+The gate fails only on **fixable** High/Critical findings. If an unfixable
+CVE must be temporarily accepted, add it to `policies/grype.yaml` under
+`ignore:` with a reason **and a review date** — exceptions are documented,
+time-boxed, and visible in git history.
+
+## Adding a distro
+
+See [`docs/ADDING_A_DISTRO.md`](docs/ADDING_A_DISTRO.md). Fedora/AlmaLinux
+use `dnf --installroot` with weak deps disabled, keep `/var/lib/rpm` in
+micro (the RPM equivalent of the dpkg status file), and must satisfy the
+same invariants: no shell/package manager in micro, USER 65532, zero setuid
+files, multi-arch, both registries, signed.

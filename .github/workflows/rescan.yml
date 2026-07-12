@@ -1,0 +1,71 @@
+name: rescan-published
+on:
+  schedule:
+    - cron: "45 */6 * * *"   # every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  GRYPE_VERSION: v0.115.0
+  GRYPE_INSTALL_SHA: fa8b7e2a528cf1f8b098123f256c61db9e5df69c
+
+jobs:
+  rescan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # bare version tags alias micro; bookworm/trixie/latest share these digests
+        tag: ["12", "12-full", "13", "13-full"]
+        repo:
+          - docker.io/${{ vars.DOCKERHUB_ORG }}/debian-hardened
+          - quay.io/${{ vars.QUAY_ORG }}/debian-hardened
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Install grype (SHA-pinned installer, pinned version)
+        run: curl -sSfL "https://raw.githubusercontent.com/anchore/grype/${GRYPE_INSTALL_SHA}/install.sh" | sudo sh -s -- -b /usr/local/bin "${GRYPE_VERSION}"
+
+      - name: Scan published image
+        id: scan
+        continue-on-error: true
+        run: |
+          grype "${{ matrix.repo }}:${{ matrix.tag }}" \
+            --config policies/grype.yaml --fail-on high --only-fixed \
+            -o json > grype.json
+
+      - name: Open issue on new findings
+        if: steps.scan.outcome == 'failure'
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const fs = require('fs');
+            let report = {};
+            try {
+              report = JSON.parse(fs.readFileSync('grype.json', 'utf8'));
+            } catch (e) {
+              core.warning(`grype failed without a report (registry/network error?): ${e}`);
+              return;
+            }
+            const vulns = (report.matches || [])
+              .filter(m => ['High','Critical'].includes(m.vulnerability.severity))
+              .map(m => `- ${m.vulnerability.id} (${m.vulnerability.severity}) in ${m.artifact.name} ${m.artifact.version}`)
+              .join('\n');
+            if (!vulns) return;  // scan failed for a non-finding reason
+            // registry-agnostic title: both registries hold the same digest,
+            // so findings dedupe into one issue per tag
+            const title = `CVEs found in debian-hardened:${{ matrix.tag }}`;
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'security'
+            });
+            if (!open.data.some(i => i.title === title)) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, labels: ['security'],
+                body: `Fixable High/Critical vulnerabilities detected (${{ matrix.repo }}:${{ matrix.tag }}):\n\n${vulns}\n\nNightly rebuild should resolve these; investigate if they persist.`
+              });
+            }

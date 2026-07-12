@@ -1,0 +1,89 @@
+name: pr
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# tool versions installed from SHA-pinned installer scripts (see Install security tools)
+env:
+  SYFT_VERSION: v1.46.0
+  SYFT_INSTALL_SHA: b15c5dbfe2bb21c9d73002c1056a829c8c411c75
+  GRYPE_VERSION: v0.115.0
+  GRYPE_INSTALL_SHA: fa8b7e2a528cf1f8b098123f256c61db9e5df69c
+  TRIVY_VERSION: v0.72.0
+  TRIVY_INSTALL_SHA: 8a32853686209a428179bb3a1688802b25691564
+  CST_VERSION: v1.22.1
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: hadolint
+        uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          dockerfile: images/debian/Dockerfile
+          config: .hadolint.yaml
+      - name: shellcheck
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y shellcheck
+          shellcheck scripts/*.sh images/common/*.sh
+
+  build-scan:
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["12", "13"]
+        flavor: [full, micro]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      - name: Build (amd64, load)
+        run: |
+          source images/debian/${{ matrix.version }}/env
+          docker buildx build \
+            --platform linux/amd64 \
+            --target ${{ matrix.flavor }} \
+            --build-arg SUITE="${SUITE}" \
+            --build-arg SNAPSHOT="${SNAPSHOT:-}" \
+            --load \
+            --tag local/debian-hardened:${{ matrix.version }}-${{ matrix.flavor }} \
+            --file images/debian/Dockerfile images
+
+      - name: Install security tools (SHA-pinned installers, pinned versions)
+        run: |
+          curl -sSfL "https://raw.githubusercontent.com/anchore/syft/${SYFT_INSTALL_SHA}/install.sh" | sudo sh -s -- -b /usr/local/bin "${SYFT_VERSION}"
+          curl -sSfL "https://raw.githubusercontent.com/anchore/grype/${GRYPE_INSTALL_SHA}/install.sh" | sudo sh -s -- -b /usr/local/bin "${GRYPE_VERSION}"
+          curl -sSfL "https://raw.githubusercontent.com/aquasecurity/trivy/${TRIVY_INSTALL_SHA}/contrib/install.sh" | sudo sh -s -- -b /usr/local/bin "${TRIVY_VERSION}"
+          sudo curl -sSfL -o /usr/local/bin/container-structure-test \
+            "https://github.com/GoogleContainerTools/container-structure-test/releases/download/${CST_VERSION}/container-structure-test-linux-amd64" \
+            && sudo chmod +x /usr/local/bin/container-structure-test
+
+      - name: Structure tests
+        run: |
+          container-structure-test test \
+            --image local/debian-hardened:${{ matrix.version }}-${{ matrix.flavor }} \
+            --config tests/debian/${{ matrix.flavor }}.yaml
+
+      - name: SBOM
+        run: scripts/sbom.sh local/debian-hardened:${{ matrix.version }}-${{ matrix.flavor }} sbom
+
+      - name: Vulnerability gate (grype + trivy)
+        run: scripts/scan.sh local/debian-hardened:${{ matrix.version }}-${{ matrix.flavor }}
+
+      - name: Dockle (CIS lint)
+        # micro only: 'full' runs as root by design (build-stage flavor),
+        # which permanently trips CIS-DI-0001 at WARN threshold
+        if: matrix.flavor == 'micro'
+        uses: erzz/dockle-action@e8a7c41f36f1236ca3282b298d425ffbfdb2e922 # v1
+        with:
+          image: local/debian-hardened:${{ matrix.version }}-${{ matrix.flavor }}
+          exit-code: 1
+          failure-threshold: WARN

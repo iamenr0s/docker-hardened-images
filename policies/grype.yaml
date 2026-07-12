@@ -1,0 +1,8 @@
+# Grype policy: gate builds on fixable High/Critical findings.
+check-for-app-update: false
+only-fixed: true
+fail-on-severity: high
+ignore:
+  # Example of a documented, time-boxed exception:
+  # - vulnerability: CVE-2025-XXXXX
+  #   reason: "No fix released upstream; mitigated by removed binary. Review 2026-08-01."

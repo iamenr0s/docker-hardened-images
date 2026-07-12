@@ -1,0 +1,4 @@
+ignored:
+  - DL3008   # pin versions in apt-get install: rootfs is snapshot-driven
+trustedRegistries:
+  - docker.io

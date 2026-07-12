@@ -1,0 +1,26 @@
+name: nightly-rebuild
+on:
+  schedule:
+    - cron: "17 2 * * *"   # daily 02:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+# same group as release.yml: a nightly rebuild must never race a release
+# triggered by the 01:00 snapshot-bump merge (reusable workflows don't
+# inherit the callee's concurrency, so it must be declared here too)
+concurrency:
+  group: release-publish
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    # With snapshot pinning, security patches arrive via the daily
+    # snapshot-bump PR (update-snapshot.yml). This nightly rebuild keeps
+    # signatures/attestations fresh. Note: it re-pushes the tags; it does
+    # NOT compare digests against the previous release, so it assumes the
+    # pinned build reproduces (reproducibility is not verified here).
+    uses: ./.github/workflows/release.yml
+    secrets: inherit
