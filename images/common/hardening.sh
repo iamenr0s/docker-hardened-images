@@ -36,11 +36,14 @@ if [ "${MODE}" = "micro" ]; then
            dpkg-trigger dpkg-maintscript-helper update-alternatives; do
     rmr "/usr/bin/${b}"
   done
-  # Keep info/*.list: scanners need file-ownership data to tie binaries
-  # (e.g. /usr/bin/openssl) to their owning deb — without it grype's
-  # binary classifier matches against upstream releases and reports
-  # false "fixable" CVEs that Debian has already patched or won't ship.
-  find "${ROOTFS}/var/lib/dpkg/info" -type f ! -name '*.list' -delete
+  # Keep the file-ownership metadata scanners use to tie binaries
+  # (e.g. /usr/bin/openssl) to their owning deb: syft reads *.md5sums
+  # and *.conffiles, trivy reads *.list. Without them grype's binary
+  # classifier matches against upstream releases and reports false
+  # "fixable" CVEs that Debian has already patched or won't ship.
+  # Maintainer scripts (postinst/prerm/...) are still removed.
+  find "${ROOTFS}/var/lib/dpkg/info" -type f \
+    ! -name '*.list' ! -name '*.md5sums' ! -name '*.conffiles' -delete
   rmr /var/lib/dpkg/updates
   rmr /var/lib/dpkg/triggers
   rmr /usr/share/dpkg
