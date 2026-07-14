@@ -25,7 +25,7 @@ jobs:
           - docker.io/${{ vars.DOCKERHUB_ORG }}/debian-hardened
           - quay.io/${{ vars.QUAY_ORG }}/debian-hardened
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Install grype (SHA-pinned installer, pinned version)
         run: curl -sSfL "https://raw.githubusercontent.com/anchore/grype/${GRYPE_INSTALL_SHA}/install.sh" | sudo sh -s -- -b /usr/local/bin "${GRYPE_VERSION}"
 
