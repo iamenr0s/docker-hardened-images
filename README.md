@@ -1,4 +1,12 @@
-# hardened-images
+# Docker Hardened Images
+
+[![release](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-hardened-images/release.yml?label=release&logo=github)](https://github.com/iamenr0s/docker-hardened-images/actions/workflows/release.yml)
+[![pr](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-hardened-images/pr.yml?label=pr&logo=github)](https://github.com/iamenr0s/docker-hardened-images/actions/workflows/pr.yml)
+[![nightly](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-hardened-images/nightly.yml?label=nightly&logo=github)](https://github.com/iamenr0s/docker-hardened-images/actions/workflows/nightly.yml)
+[![update-snapshot](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-hardened-images/update-snapshot.yml?label=update-snapshot&logo=github)](https://github.com/iamenr0s/docker-hardened-images/actions/workflows/update-snapshot.yml)
+[![rescan](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-hardened-images/rescan.yml?label=rescan&logo=github)](https://github.com/iamenr0s/docker-hardened-images/actions/workflows/rescan.yml)
+[![Signed with cosign](https://img.shields.io/badge/images-signed%20with%20cosign-2f80ed?logo=sigstore)](#supply-chain-security)
+[![Dependabot](https://img.shields.io/badge/dependabot-enabled-brightgreen?logo=dependabot)](.github/dependabot.yml)
 
 A collection of minimal, hardened container base images built from scratch,
 targeting **near-zero CVEs** through aggressive minimisation, reproducible
@@ -7,6 +15,19 @@ multi-arch (**amd64 + arm64**), signed with **cosign**, and ship with
 **syft** SBOMs attached as attestations.
 
 Published to **Docker Hub** and **Quay.io** with identical multi-arch manifests.
+
+## Available Images
+
+| Build | Quay.io | Docker Hub |
+|---|---|---|
+| [![debian12](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-hardened-images/release.yml?label=debian12&logo=github)](https://github.com/iamenr0s/docker-hardened-images/actions/workflows/release.yml) | [![Quay Pulls](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fiamenr0s%2Fdocker-hardened-images%2Fbadges%2Fbadges%2Fquay-debian-hardened.json)](https://quay.io/repository/iamenr0s/debian-hardened?tab=tags&tag=12) | [![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/debian-hardened?logo=docker)](https://hub.docker.com/r/iamenr0s/debian-hardened) |
+| [![debian13](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-hardened-images/release.yml?label=debian13&logo=github)](https://github.com/iamenr0s/docker-hardened-images/actions/workflows/release.yml) | [![Quay Pulls](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fiamenr0s%2Fdocker-hardened-images%2Fbadges%2Fbadges%2Fquay-debian-hardened.json)](https://quay.io/repository/iamenr0s/debian-hardened?tab=tags&tag=13) | [![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/debian-hardened?logo=docker)](https://hub.docker.com/r/iamenr0s/debian-hardened) |
+
+All Debian versions are published as tags of the single `debian-hardened`
+repository on each registry, so the pull counters are repo-wide. The Quay
+badge shows pulls over the last ~3 months (Quay exposes no all-time
+counter); it is refreshed daily by
+[`quay-pulls-badge.yml`](.github/workflows/quay-pulls-badge.yml).
 
 ---
 

@@ -1,0 +1,38 @@
+name: quay-pulls-badge
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  badge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      # Quay only exposes ~3 months of daily pull stats (no all-time
+      # counter), so the badge shows pulls over that window.
+      - name: Generate badge JSON
+        run: |
+          mkdir -p badges
+          pulls=$(curl -sf "https://quay.io/api/v1/repository/iamenr0s/debian-hardened?includeStats=true" \
+            | jq '[.stats[].count] | add // 0')
+          jq -n --argjson pulls "$pulls" \
+            '{schemaVersion: 1, label: "quay pulls/3mo", message: ($pulls | tostring), namedLogo: "redhat", color: "red"}' \
+            > badges/quay-debian-hardened.json
+
+      # Published to the orphan "badges" branch, NOT main: pushes to main
+      # trigger release.yml and are gated by branch protection.
+      - name: Publish to badges branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan badges
+          git rm -rf --cached . >/dev/null
+          git add -f badges/
+          git commit -m "chore: update Quay pulls badge"
+          git push -f origin badges
