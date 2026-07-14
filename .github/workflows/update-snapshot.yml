@@ -22,6 +22,7 @@ jobs:
           echo "snapshot=$(grep -oP '^SNAPSHOT=\K.*' images/debian/12/env)" >> "$GITHUB_OUTPUT"
 
       - name: Open PR
+        id: pr
         uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
         with:
           branch: bot/snapshot-bump
@@ -39,3 +40,14 @@ jobs:
             Owner review, enabling auto-merge is safe here — this PR only
             touches env files (not code-owned), so patched images ship
             without manual intervention while code changes still need review.
+
+      # Arms auto-merge; GitHub merges once the required checks on main's
+      # branch protection pass. Merging with GITHUB_TOKEN does not trigger
+      # release.yml's push run — the nightly rebuild (02:17 UTC) publishes
+      # the bumped snapshot instead.
+      - name: Enable auto-merge
+        if: steps.pr.outputs.pull-request-number
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.pull-request-number }}
+        run: gh pr merge --squash --auto "$PR"
