@@ -8,12 +8,12 @@ permissions:
   contents: read
   id-token: write
 
-# same group as release.yml: a nightly rebuild must never race a release
-# triggered by the 01:00 snapshot-bump merge (reusable workflows don't
-# inherit the callee's concurrency, so it must be declared here too)
-concurrency:
-  group: release-publish
-  cancel-in-progress: false
+# NOTE: no top-level concurrency here. release.yml's own
+# "release-publish" group applies when it runs as a reusable workflow,
+# so nightly rebuilds already serialize against snapshot-bump releases.
+# Declaring the same group here deadlocks the run at startup (caller
+# holds the group the callee then waits on) — GitHub fails it with
+# zero jobs.
 
 jobs:
   rebuild:
