@@ -25,6 +25,10 @@ jobs:
         id: pr
         uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
         with:
+          # BOT_TOKEN (fine-grained PAT, see README "CI setup") lets the
+          # bot PR trigger pr.yml — GITHUB_TOKEN-created PRs never do
+          # (recursion guard). Falls back to GITHUB_TOKEN if unset.
+          token: ${{ secrets.BOT_TOKEN || github.token }}
           branch: bot/snapshot-bump
           title: "chore: bump Debian snapshot to ${{ steps.bump.outputs.snapshot }}"
           commit-message: "chore: bump Debian snapshot to ${{ steps.bump.outputs.snapshot }}"
@@ -48,6 +52,6 @@ jobs:
       - name: Enable auto-merge
         if: steps.pr.outputs.pull-request-number
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.BOT_TOKEN || github.token }}
           PR: ${{ steps.pr.outputs.pull-request-number }}
         run: gh pr merge --squash --auto "$PR"

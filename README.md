@@ -174,13 +174,29 @@ docs/ADDING_A_DISTRO.md  contract for new distributions
    (at the cost of unattended patching).
 3. Replace the `CHANGEME` placeholders in `Makefile`, `scripts/build.sh`
    and `.github/CODEOWNERS`
-4. Branch protection on `main`: require the `pr` checks **and review from
-   Code Owners**, then enable **auto-merge**. `.github/CODEOWNERS` covers
-   every path that changes what gets built or signed, but deliberately not
-   `images/<distro>/<version>/env` — so code changes need a human, while
-   daily snapshot-bump PRs (env-only diffs) auto-merge and ship patches
-   unattended within 24h
-5. Recommended: enable GitHub issue label `security` (used by `rescan.yml`)
+4. **`BOT_TOKEN` secret (recommended)** — a fine-grained PAT so the daily
+   snapshot-bump PR runs the full `pr` pipeline. Without it the PR is
+   opened with `GITHUB_TOKEN`, and GitHub's recursion guard means
+   workflow-triggered checks (`pr.yml`) **never run on that PR** — only
+   app checks (e.g. CodeQL) do. The release workflow's own grype/trivy
+   gate still blocks bad publishes, but the PR itself is unverified.
+   Create it under Settings → Developer settings → Fine-grained tokens:
+   - Repository access: only this repo
+   - Permissions: **Contents: read/write**, **Pull requests: read/write**
+   - Save it as a repo secret named `BOT_TOKEN`
+     (`gh secret set BOT_TOKEN`); `update-snapshot.yml` picks it up
+     automatically and falls back to `GITHUB_TOKEN` when absent.
+   Bonus: merges made with the PAT trigger `release.yml` immediately,
+   instead of waiting for the 02:17 UTC nightly rebuild.
+5. Branch protection on `main`: enable **auto-merge** and require status
+   checks. With `BOT_TOKEN` in place, require the `pr` checks (and
+   optionally review from Code Owners — `.github/CODEOWNERS` covers every
+   path that changes what gets built or signed, but deliberately not
+   `images/<distro>/<version>/env`, so env-only bump PRs merge unattended).
+   **Without** `BOT_TOKEN`, only require checks that actually run on
+   bot-created PRs (app-based ones) — requiring `pr` checks would leave
+   the bump PRs blocked forever.
+6. Recommended: enable GitHub issue label `security` (used by `rescan.yml`)
 
 ## CVE exceptions policy
 
