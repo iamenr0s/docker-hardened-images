@@ -7,6 +7,7 @@
 [![rescan](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-hardened-images/rescan.yml?label=rescan&logo=github)](https://github.com/iamenr0s/docker-hardened-images/actions/workflows/rescan.yml)
 [![Signed with cosign](https://img.shields.io/badge/images-signed%20with%20cosign-2f80ed?logo=sigstore)](#supply-chain-security)
 [![Dependabot](https://img.shields.io/badge/dependabot-enabled-brightgreen?logo=dependabot)](.github/dependabot.yml)
+[![License](https://img.shields.io/github/license/iamenr0s/docker-hardened-images)](LICENSE)
 
 A collection of minimal, hardened container base images built from scratch,
 targeting **near-zero CVEs** through aggressive minimisation, reproducible
@@ -233,3 +234,18 @@ use `dnf --installroot` with weak deps disabled, keep `/var/lib/rpm` in
 micro (the RPM equivalent of the dpkg status file), and must satisfy the
 same invariants: no shell/package manager in micro, USER 65532, zero setuid
 files, multi-arch, both registries, signed.
+
+## Contributing
+
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the
+local pipeline commands and pull request checklist. This project follows the
+[Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md) — GitHub private vulnerability reporting, no
+public issues for security bugs.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
