@@ -24,7 +24,7 @@ mkdir -p "${ROOTFS}"
 dnf install -y \
   --installroot="${ROOTFS}" \
   --releasever="${RELEASEVER}" \
-  --use-host-config \
+  -c /etc/dnf/dnf.conf \
   --setopt=install_weak_deps=False \
   --setopt=tsflags=nodocs \
   dnf coreutils-single glibc-minimal-langpack filesystem ca-certificates tzdata "${RELEASE_PKG}"
