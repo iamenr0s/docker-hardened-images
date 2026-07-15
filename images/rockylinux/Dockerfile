@@ -19,7 +19,7 @@ ARG VERSION
 COPY common/build-rootfs-rpm.sh common/hardening.sh /opt/build/
 RUN chmod +x /opt/build/*.sh
 
-RUN /opt/build/build-rootfs-rpm.sh /rootfs "${VERSION}"
+RUN /opt/build/build-rootfs-rpm.sh /rootfs "${VERSION}" rocky-release
 
 # apply the latest security updates inside the new rootfs before sealing it
 RUN chroot /rootfs sh -c 'dnf upgrade -y && dnf clean all && rm -rf /var/cache/dnf/*'

@@ -14,14 +14,21 @@ to:
      Debian and Ubuntu share this one script — see its `case "${DISTRO}"`
      branch for mirror/arch handling (Ubuntu splits live mirrors by arch
      and has no separate security host, unlike Debian).
-   - **rpm family**: bootstrap `FROM <distro>:${VERSION}` (dnf's repo
-     config is already correct out of the box — no mirror/keyring wiring
-     needed), call `images/common/build-rootfs-rpm.sh /rootfs "${VERSION}"`,
-     then `chroot /rootfs sh -c 'dnf upgrade -y && dnf clean all && rm -rf /var/cache/dnf/*'`.
-     No historical snapshot pin (no public timestamp-mirror service for
-     dnf); freshness comes from the build-time `dnf upgrade` plus the
-     nightly rebuild. Keep `/var/lib/rpm` in micro so scanners still work —
-     the RPM equivalent of keeping `/var/lib/dpkg/status`.
+   - **rpm family**: bootstrap `FROM <distro>:${VERSION}`, call
+     `images/common/build-rootfs-rpm.sh /rootfs "${VERSION}" <release-package>`
+     (e.g. `fedora-release`, `almalinux-release`, `rocky-release`), then
+     `chroot /rootfs sh -c 'dnf upgrade -y && dnf clean all && rm -rf /var/cache/dnf/*'`.
+     A fresh installroot has no repo config of its own, so the script uses
+     `--use-host-config` to borrow the bootstrap image's baked-in repos for
+     the initial install, and explicitly installs the distro's
+     `<release-package>` so the rootfs ends up with its own
+     `/etc/yum.repos.d` — otherwise the later `chroot dnf upgrade` step
+     (which has no host config to borrow from) fails with "No repositories
+     were loaded from the installroot." No historical snapshot pin (no
+     public timestamp-mirror service for dnf); freshness comes from the
+     build-time `dnf upgrade` plus the nightly rebuild. Keep `/var/lib/rpm`
+     in micro so scanners still work — the RPM equivalent of keeping
+     `/var/lib/dpkg/status`.
 2. `images/<distro>/<version>/env` — deb-family: `SUITE`, `VERSION`,
    `EXTRA_TAGS`, `SNAPSHOT` (empty = live mirrors). rpm-family: `VERSION`,
    `EXTRA_TAGS` — omit `SNAPSHOT=` entirely so `scripts/update-snapshot.sh`

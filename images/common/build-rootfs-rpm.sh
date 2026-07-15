@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 # Build a minimal RPM-family rootfs (Fedora/AlmaLinux/RockyLinux) with
-# dnf --installroot. Unlike the deb path, no mirror/keyring wiring is
-# needed here: the bootstrap stage already runs FROM the target distro's
-# own base image, so dnf's baked-in repo config is already correct.
+# dnf --installroot. A fresh installroot has no repo config of its own, so
+# --use-host-config borrows the bootstrap image's baked-in repos to resolve
+# packages; the distro's <release-package> is installed explicitly so the
+# rootfs ends up with its own /etc/yum.repos.d (needed for the caller's
+# later `chroot dnf upgrade` step, which has no host config to borrow from).
 # ponytail: no historical snapshot pin (RPM distros lack a public
 # timestamp-mirror service like snapshot.debian.org); the caller applies
 # a build-time `dnf upgrade` for freshness instead. Add vault/point-release
 # pinning for AlmaLinux/Rocky if true reproducibility is needed later.
-# Usage: build-rootfs-rpm.sh <rootfs-dir> <releasever>
+# Usage: build-rootfs-rpm.sh <rootfs-dir> <releasever> <release-package>
 set -euo pipefail
 
 ROOTFS="${1:?rootfs dir required}"
 RELEASEVER="${2:?releasever required}"
+RELEASE_PKG="${3:?release package required (e.g. fedora-release, almalinux-release, rocky-release)}"
 
 mkdir -p "${ROOTFS}"
 
@@ -21,9 +24,10 @@ mkdir -p "${ROOTFS}"
 dnf install -y \
   --installroot="${ROOTFS}" \
   --releasever="${RELEASEVER}" \
+  --use-host-config \
   --setopt=install_weak_deps=False \
   --setopt=tsflags=nodocs \
-  dnf coreutils-single glibc-minimal-langpack filesystem ca-certificates tzdata
+  dnf coreutils-single glibc-minimal-langpack filesystem ca-certificates tzdata "${RELEASE_PKG}"
 
 dnf clean all --installroot="${ROOTFS}"
 rm -rf "${ROOTFS}/var/cache/dnf" \
