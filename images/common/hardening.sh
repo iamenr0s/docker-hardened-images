@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Apply hardening to a rootfs. Mode 'micro' additionally removes the
 # package manager, shells and login tooling for a minimal attack surface.
-# Usage: hardening.sh <rootfs-dir> <full|micro>
+# Usage: hardening.sh <rootfs-dir> <full|micro> <deb|rpm>
 set -euo pipefail
 
 ROOTFS="${1:?rootfs dir required}"
 MODE="${2:?mode required (full|micro)}"
+PKGFAMILY="${3:?pkgfamily required (deb|rpm)}"
 
 # 1. Remove all setuid/setgid bits (privilege-escalation surface).
 # Must fail loudly: a silent no-op here would void the zero-setuid guarantee.
@@ -20,44 +21,69 @@ rm -f "${ROOTFS}/usr/bin/wget" "${ROOTFS}/usr/bin/curl" \
 sed -i 's|^root:[^:]*:|root:*:|' "${ROOTFS}/etc/shadow"
 
 if [ "${MODE}" = "micro" ]; then
-  # Remove package management binaries but KEEP /var/lib/dpkg/status
-  # so SBOM/CVE scanners (syft, grype, trivy) still identify packages.
   rmr() { rm -rf "${ROOTFS}${1}" 2>/dev/null || true; }
 
-  # apt and friends
-  rmr /usr/bin/apt;        rmr /usr/bin/apt-get
-  rmr /usr/bin/apt-cache;  rmr /usr/bin/apt-config
-  rmr /usr/bin/apt-key;    rmr /usr/bin/apt-mark
-  rmr /usr/lib/apt;        rmr /etc/apt
-  rmr /var/cache/apt;      rmr /var/lib/apt
+  case "${PKGFAMILY}" in
+    deb)
+      # Remove package management binaries but KEEP /var/lib/dpkg/status
+      # so SBOM/CVE scanners (syft, grype, trivy) still identify packages.
 
-  # dpkg binaries (package database is preserved)
-  for b in dpkg dpkg-deb dpkg-divert dpkg-query dpkg-split dpkg-statoverride \
-           dpkg-trigger dpkg-maintscript-helper update-alternatives; do
-    rmr "/usr/bin/${b}"
-  done
-  # Keep the file-ownership metadata scanners use to tie binaries
-  # (e.g. /usr/bin/openssl) to their owning deb: syft reads *.md5sums
-  # and *.conffiles, trivy reads *.list. Without them grype's binary
-  # classifier matches against upstream releases and reports false
-  # "fixable" CVEs that Debian has already patched or won't ship.
-  # Maintainer scripts (postinst/prerm/...) are still removed.
-  find "${ROOTFS}/var/lib/dpkg/info" -type f \
-    ! -name '*.list' ! -name '*.md5sums' ! -name '*.conffiles' -delete
-  rmr /var/lib/dpkg/updates
-  rmr /var/lib/dpkg/triggers
-  rmr /usr/share/dpkg
+      # apt and friends
+      rmr /usr/bin/apt;        rmr /usr/bin/apt-get
+      rmr /usr/bin/apt-cache;  rmr /usr/bin/apt-config
+      rmr /usr/bin/apt-key;    rmr /usr/bin/apt-mark
+      rmr /usr/lib/apt;        rmr /etc/apt
+      rmr /var/cache/apt;      rmr /var/lib/apt
 
-  # shells & interactive login tooling
+      # dpkg binaries (package database is preserved)
+      for b in dpkg dpkg-deb dpkg-divert dpkg-query dpkg-split dpkg-statoverride \
+               dpkg-trigger dpkg-maintscript-helper update-alternatives; do
+        rmr "/usr/bin/${b}"
+      done
+      # Keep the file-ownership metadata scanners use to tie binaries
+      # (e.g. /usr/bin/openssl) to their owning deb: syft reads *.md5sums
+      # and *.conffiles, trivy reads *.list. Without them grype's binary
+      # classifier matches against upstream releases and reports false
+      # "fixable" CVEs that Debian has already patched or won't ship.
+      # Maintainer scripts (postinst/prerm/...) are still removed.
+      find "${ROOTFS}/var/lib/dpkg/info" -type f \
+        ! -name '*.list' ! -name '*.md5sums' ! -name '*.conffiles' -delete
+      rmr /var/lib/dpkg/updates
+      rmr /var/lib/dpkg/triggers
+      rmr /usr/share/dpkg
+
+      # perl-base is only needed by dpkg tooling we just removed
+      rmr /usr/bin/perl
+      # the * must stay unquoted so it expands under the rootfs, not literally
+      rm -rf "${ROOTFS}"/usr/lib/*/perl-base
+      ;;
+    rpm)
+      # Remove dnf/yum/rpm binaries but KEEP /var/lib/rpm so SBOM/CVE
+      # scanners (syft, grype, trivy) can still identify packages via
+      # the rpmdb — the RPM equivalent of keeping /var/lib/dpkg/status.
+      # Unlike the dpkg case, there's no per-file metadata directory to
+      # cherry-pick: the rpmdb directory is scanned as a whole.
+      for b in dnf dnf-3 microdnf yum rpm; do
+        rmr "/usr/bin/${b}"
+      done
+      rmr /etc/dnf;         rmr /etc/yum.repos.d
+      rmr /var/cache/dnf;   rmr /var/cache/yum
+      rmr /usr/lib/rpm;     rmr /usr/lib/dnf
+      find "${ROOTFS}/usr/lib" -maxdepth 1 -type d -name 'python3*' \
+        -exec rm -rf {}/site-packages/dnf {}/site-packages/dnf-plugins-core \; \
+        2>/dev/null || true
+      ;;
+    *)
+      echo "unsupported pkgfamily: ${PKGFAMILY}" >&2
+      exit 1
+      ;;
+  esac
+
+  # shells & interactive login tooling (same convention across families)
   for b in bash sh dash login su chsh chfn passwd; do
     rmr "/usr/bin/${b}"; rmr "/bin/${b}"; rmr "/usr/sbin/${b}"
   done
   rmr /etc/skel
-
-  # perl-base is only needed by dpkg tooling we just removed
-  rmr /usr/bin/perl
-  # the * must stay unquoted so it expands under the rootfs, not literally
-  rm -rf "${ROOTFS}"/usr/lib/*/perl-base
 fi
 
 echo "hardening (${MODE}) applied: $(du -sh "${ROOTFS}" | cut -f1)"

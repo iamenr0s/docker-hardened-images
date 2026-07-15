@@ -1,0 +1,34 @@
+schemaVersion: 2.0.0
+metadataTest:
+  user: "65532:65532"
+fileExistenceTests:
+  - name: no shell
+    path: /bin/sh
+    shouldExist: false
+  - name: no bash
+    path: /bin/bash
+    shouldExist: false
+  - name: no apt
+    path: /usr/bin/apt-get
+    shouldExist: false
+  - name: no dpkg binary
+    path: /usr/bin/dpkg
+    shouldExist: false
+  - name: no apt configuration
+    path: /etc/apt
+    shouldExist: false
+  - name: no perl
+    path: /usr/bin/perl
+    shouldExist: false
+  - name: no perl-base libs (amd64 path; other arches have none either way)
+    path: /usr/lib/x86_64-linux-gnu/perl-base
+    shouldExist: false
+  - name: dpkg status kept for scanners
+    path: /var/lib/dpkg/status
+    shouldExist: true
+  - name: CA certificates present
+    path: /etc/ssl/certs/ca-certificates.crt
+    shouldExist: true
+  - name: nonroot home
+    path: /home/nonroot
+    shouldExist: true
