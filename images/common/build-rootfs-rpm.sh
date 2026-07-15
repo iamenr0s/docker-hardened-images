@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 # Build a minimal RPM-family rootfs (Fedora/AlmaLinux/RockyLinux) with
-# dnf --installroot. A fresh installroot has no repo config of its own, so
-# `-c /etc/dnf/dnf.conf` points dnf at the bootstrap image's own config
-# (which references its baked-in repos) instead of looking inside the
-# empty installroot; `--enablerepo='*'` covers images (Fedora) that ship
-# repo definitions disabled by default. The distro's <release-package> is
-# installed explicitly so the rootfs ends up with its own /etc/yum.repos.d
-# (needed for the caller's later `chroot dnf upgrade` step, which has no
-# host config to borrow from).
+# dnf --installroot. A fresh installroot has no repo config of its own;
+# how to borrow the bootstrap image's baked-in repos differs by dnf major:
+#   dnf5 (Fedora 41+): loads NO host repos with --installroot unless
+#     --use-host-config is passed (`-c` alone resolves zero repos).
+#   dnf4 (EL9/EL10): doesn't know --use-host-config; `-c /etc/dnf/dnf.conf`
+#     makes it read the host config and reposdir.
+# Only default-enabled repos are used — wildcard-enabling everything pulls
+# in debuginfo/source repos whose mirrorlists can be empty (Rocky 10).
+# The distro's <release-package> is installed explicitly so the rootfs
+# ends up with its own /etc/yum.repos.d (needed for the caller's later
+# `chroot dnf upgrade` step, which has no host config to borrow from).
 # ponytail: no historical snapshot pin (RPM distros lack a public
 # timestamp-mirror service like snapshot.debian.org); the caller applies
 # a build-time `dnf upgrade` for freshness instead. Add vault/point-release
@@ -24,11 +27,16 @@ mkdir -p "${ROOTFS}"
 # dnf itself is included so 'full' keeps a working package manager (mirrors
 # debootstrap minbase always including apt) and the caller's chroot upgrade
 # step has a binary to run; hardening.sh strips it back out for 'micro'.
+if command -v dnf5 >/dev/null 2>&1; then
+  HOST_REPOS=(--use-host-config)
+else
+  HOST_REPOS=(-c /etc/dnf/dnf.conf)
+fi
+
 dnf install -y \
   --installroot="${ROOTFS}" \
   --releasever="${RELEASEVER}" \
-  -c /etc/dnf/dnf.conf \
-  --enablerepo='*' \
+  "${HOST_REPOS[@]}" \
   --setopt=install_weak_deps=False \
   --setopt=tsflags=nodocs \
   dnf coreutils-single glibc-minimal-langpack filesystem ca-certificates tzdata "${RELEASE_PKG}"

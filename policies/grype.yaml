@@ -6,3 +6,7 @@ ignore:
   # Example of a documented, time-boxed exception:
   # - vulnerability: CVE-2025-XXXXX
   #   reason: "No fix released upstream; mitigated by removed binary. Review 2026-08-01."
+  - vulnerability: CVE-2026-4878
+    package:
+      name: libcap
+    reason: "Fixed in RHEL (libcap-2.48-10.el9_8.1) but Rocky 9 mirrors still ship el9_7.1; not yet installable. Review 2026-08-01."
