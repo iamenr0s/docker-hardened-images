@@ -24,8 +24,13 @@ RUN chmod +x /opt/build/*.sh
 
 RUN /opt/build/build-rootfs-deb.sh /rootfs debian "${SUITE}" /usr/share/keyrings/debian-archive-keyring.gpg "${SNAPSHOT}"
 
-# apply the latest security updates inside the new rootfs before sealing it
-RUN chroot /rootfs sh -c 'apt-get update && apt-get -y upgrade && apt-get clean && rm -rf /var/lib/apt/lists/*'
+# apply the latest security updates inside the new rootfs before sealing it.
+# debootstrap copies the build host's /etc/resolv.conf into the rootfs (a
+# well-known debootstrap side effect, needed for this chroot's own network
+# access) but never removes it — strip it after so the build host's DNS
+# config never ends up in a published image.
+RUN chroot /rootfs sh -c 'apt-get update && apt-get -y upgrade && apt-get clean && rm -rf /var/lib/apt/lists/*' \
+ && rm -f /rootfs/etc/resolv.conf
 
 # ------------------------------------------------------------- harden: full
 FROM bootstrap AS harden-full

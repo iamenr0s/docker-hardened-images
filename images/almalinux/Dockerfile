@@ -21,8 +21,15 @@ RUN chmod +x /opt/build/*.sh
 
 RUN /opt/build/build-rootfs-rpm.sh /rootfs "${VERSION}" almalinux-release
 
-# apply the latest security updates inside the new rootfs before sealing it
-RUN chroot /rootfs sh -c 'dnf upgrade -y && dnf clean all && rm -rf /var/cache/dnf/*'
+# apply the latest security updates inside the new rootfs before sealing it.
+# unlike debootstrap, `dnf --installroot` never leaves a resolv.conf in the
+# target (DNS is resolved by the outer dnf process during that step), so
+# this chroot has none of its own — seed it from the build host, then
+# remove it again so the build host's DNS config never ends up in a
+# published image.
+RUN cp /etc/resolv.conf /rootfs/etc/resolv.conf \
+ && chroot /rootfs sh -c 'dnf upgrade -y && dnf clean all && rm -rf /var/cache/dnf/*' \
+ && rm -f /rootfs/etc/resolv.conf
 
 # ------------------------------------------------------------- harden: full
 FROM bootstrap AS harden-full
