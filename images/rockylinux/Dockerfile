@@ -13,7 +13,7 @@
 ARG VERSION=9
 
 # ------------------------------------------------------------------ bootstrap
-FROM rockylinux:${VERSION} AS bootstrap
+FROM rockylinux/rockylinux:${VERSION} AS bootstrap
 ARG VERSION
 
 COPY common/build-rootfs-rpm.sh common/hardening.sh /opt/build/
