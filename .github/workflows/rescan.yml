@@ -70,6 +70,38 @@ jobs:
             --config policies/grype.yaml --fail-on high --only-fixed \
             -o json > grype.json
 
+      # Shields endpoint JSON for the README table. Only the quay.io leg
+      # writes it: both registries hold the same digest, counts are identical.
+      # .matches is already the gate's population (fixable, not policy-ignored).
+      - name: Generate CVE badge JSON
+        if: matrix.registry == 'quay.io'
+        run: |
+          jq -e . grype.json >/dev/null 2>&1 || { echo "no valid grype report; keeping previous badge"; exit 0; }
+          crit=$(jq '[.matches[]? | select(.vulnerability.severity == "Critical")] | length' grype.json)
+          high=$(jq '[.matches[]? | select(.vulnerability.severity == "High")] | length' grype.json)
+          med=$(jq '[.matches[]? | select(.vulnerability.severity == "Medium")] | length' grype.json)
+          total=$(jq '.matches | length' grype.json)
+          if [ "$total" -eq 0 ]; then
+            msg="0 fixable"; color="brightgreen"
+          else
+            msg="${total} fixable"
+            if [ $((crit + high)) -gt 0 ]; then color="red"
+            elif [ "$med" -gt 0 ]; then color="orange"
+            else color="yellow"; fi
+          fi
+          mkdir -p badge
+          jq -n --arg msg "$msg" --arg color "$color" \
+            '{schemaVersion: 1, label: "CVEs", message: $msg, color: $color}' \
+            > "badge/cve-${{ matrix.distro }}-${{ matrix.tag }}.json"
+
+      - name: Upload badge artifact
+        if: matrix.registry == 'quay.io'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: cve-badge-${{ matrix.distro }}-${{ matrix.tag }}
+          path: badge/
+          if-no-files-found: ignore
+
       - name: Open issue on new findings
         if: steps.scan.outcome == 'failure'
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
@@ -102,3 +134,31 @@ jobs:
                 body: `Fixable High/Critical vulnerabilities detected (${{ steps.repo.outputs.ref }}:${{ matrix.tag }}):\n\n${vulns}\n\nNightly rebuild should resolve these; investigate if they persist.`
               });
             }
+
+  # Single commit for all badge files on the orphan "badges" branch (never
+  # main: pushes to main trigger release.yml). Committing on top of the
+  # branch preserves files owned by other badge workflows (quay-pulls-badge).
+  publish-badges:
+    needs: rescan
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: badges
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: cve-badge-*
+          merge-multiple: true
+          path: badges/
+      - name: Commit updated badges
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add badges/
+          git diff --cached --quiet && { echo "badges unchanged"; exit 0; }
+          git commit -m "chore: update CVE badges"
+          git push origin badges || { git pull --rebase origin badges && git push origin badges; }
