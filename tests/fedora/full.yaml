@@ -9,8 +9,10 @@ fileExistenceTests:
   - name: no curl
     path: /usr/bin/curl
     shouldExist: false
+  # Fedora 44+ dropped the legacy /etc/pki/tls/certs/ca-bundle.crt symlink;
+  # this is the canonical bundle everything else links to.
   - name: CA certificates present
-    path: /etc/pki/tls/certs/ca-bundle.crt
+    path: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
     shouldExist: true
 commandTests:
   - name: no setuid binaries

@@ -20,8 +20,10 @@ fileExistenceTests:
   - name: rpm database kept for scanners
     path: /var/lib/rpm
     shouldExist: true
+  # Fedora 44+ dropped the legacy /etc/pki/tls/certs/ca-bundle.crt symlink;
+  # this is the canonical bundle everything else links to.
   - name: CA certificates present
-    path: /etc/pki/tls/certs/ca-bundle.crt
+    path: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
     shouldExist: true
   - name: nonroot home
     path: /home/nonroot
