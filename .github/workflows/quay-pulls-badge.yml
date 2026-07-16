@@ -12,7 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # Work on the badges branch itself so other badge writers' files
+      # (e.g. rescan.yml's cve-*.json) survive this workflow's commit.
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: badges
 
       # Quay only exposes ~3 months of daily pull stats (no all-time
       # counter), so the badge shows pulls over that window. One badge per
@@ -34,8 +38,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan badges
-          git rm -rf --cached . >/dev/null
-          git add -f badges/
+          git add badges/
+          git diff --cached --quiet && { echo "badges unchanged"; exit 0; }
           git commit -m "chore: update Quay pulls badge"
-          git push -f origin badges
+          git push origin badges || { git pull --rebase origin badges && git push origin badges; }
