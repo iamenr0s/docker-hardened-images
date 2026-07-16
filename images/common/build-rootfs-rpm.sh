@@ -32,7 +32,8 @@ mkdir -p "${ROOTFS}"
 # current) and its commented baseurl is a dummy download.example host.
 pin_authoritative_baseurl() {
   local f
-  for f in "$1"/rocky*.repo "$1"/almalinux*.repo; do
+  # EL8 ships capitalized file names (Rocky-BaseOS.repo); EL9+ lowercase.
+  for f in "$1"/[Rr]ocky*.repo "$1"/almalinux*.repo; do
     [ -e "$f" ] || continue
     sed -i -e 's|^mirrorlist=|#mirrorlist=|' -e 's|^#[[:space:]]*baseurl=|baseurl=|' "$f"
   done

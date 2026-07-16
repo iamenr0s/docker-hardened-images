@@ -31,10 +31,18 @@ jobs:
           - { distro: ubuntu, tag: "24.04-full" }
           - { distro: fedora, tag: "44" }
           - { distro: fedora, tag: "44-full" }
+          - { distro: fedora, tag: "43" }
+          - { distro: fedora, tag: "43-full" }
+          - { distro: fedora, tag: "42" }
+          - { distro: fedora, tag: "42-full" }
+          - { distro: almalinux, tag: "8" }
+          - { distro: almalinux, tag: "8-full" }
           - { distro: almalinux, tag: "9" }
           - { distro: almalinux, tag: "9-full" }
           - { distro: almalinux, tag: "10" }
           - { distro: almalinux, tag: "10-full" }
+          - { distro: rockylinux, tag: "8" }
+          - { distro: rockylinux, tag: "8-full" }
           - { distro: rockylinux, tag: "9" }
           - { distro: rockylinux, tag: "9-full" }
           - { distro: rockylinux, tag: "10" }

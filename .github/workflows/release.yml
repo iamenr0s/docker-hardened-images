@@ -45,10 +45,18 @@ jobs:
           - { distro: ubuntu, version: "24.04", flavor: micro }
           - { distro: fedora, version: "44", flavor: full }
           - { distro: fedora, version: "44", flavor: micro }
+          - { distro: fedora, version: "43", flavor: full }
+          - { distro: fedora, version: "43", flavor: micro }
+          - { distro: fedora, version: "42", flavor: full }
+          - { distro: fedora, version: "42", flavor: micro }
+          - { distro: almalinux, version: "8", flavor: full }
+          - { distro: almalinux, version: "8", flavor: micro }
           - { distro: almalinux, version: "9", flavor: full }
           - { distro: almalinux, version: "9", flavor: micro }
           - { distro: almalinux, version: "10", flavor: full }
           - { distro: almalinux, version: "10", flavor: micro }
+          - { distro: rockylinux, version: "8", flavor: full }
+          - { distro: rockylinux, version: "8", flavor: micro }
           - { distro: rockylinux, version: "9", flavor: full }
           - { distro: rockylinux, version: "9", flavor: micro }
           - { distro: rockylinux, version: "10", flavor: full }
