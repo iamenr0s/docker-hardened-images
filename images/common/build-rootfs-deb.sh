@@ -26,15 +26,16 @@ case "${DISTRO}" in
     # everything else), unlike Debian's single deb.debian.org host.
     ARCH="$(dpkg --print-architecture)"
     case "${ARCH}" in
-      amd64|i386) LIVE_HOST="archive.ubuntu.com" ;;
-      *)          LIVE_HOST="ports.ubuntu.com" ;;
+      amd64|i386) LIVE_HOST="archive.ubuntu.com" ; TREE="ubuntu" ;;
+      *)          LIVE_HOST="ports.ubuntu.com"   ; TREE="ubuntu-ports" ;;
     esac
     if [ -n "${SNAPSHOT}" ]; then
       # snapshot.ubuntu.com serves one unified archive tree (security
-      # updates land in the same repo as main on Ubuntu, unlike Debian).
-      MIRROR="https://snapshot.ubuntu.com/ubuntu/${SNAPSHOT}"
+      # updates land in the same repo as main on Ubuntu, unlike Debian),
+      # split by arch into /ubuntu and /ubuntu-ports like the live hosts.
+      MIRROR="https://snapshot.ubuntu.com/${TREE}/${SNAPSHOT}"
     else
-      MIRROR="http://${LIVE_HOST}/ubuntu"
+      MIRROR="http://${LIVE_HOST}/${TREE}"
     fi
     SEC_MIRROR="${MIRROR}"
     ;;
