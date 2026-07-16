@@ -10,3 +10,5 @@ ignore:
     package:
       name: libcap
     reason: "Fixed in RHEL (libcap-2.48-10.el9_8.1) but Rocky 9 mirrors still ship el9_7.1; not yet installable. Review 2026-08-01."
+  - vulnerability: CVE-2026-15308
+    reason: "python3/python3-libs fixed in RHEL (el9_8.2) but Rocky 9 still ships el9_8 even on dl.rockylinux.org; not yet installable. Review 2026-08-01."

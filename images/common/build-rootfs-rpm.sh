@@ -41,6 +41,11 @@ pin_authoritative_baseurl() {
 
 pin_authoritative_baseurl /etc/yum.repos.d
 
+# EL8 base images don't ship findutils; hardening.sh (which runs later in
+# the same bootstrap stage) needs `find`. Installs into the bootstrap
+# image only — never into the rootfs being built.
+command -v find >/dev/null 2>&1 || dnf install -y findutils
+
 # dnf itself is included so 'full' keeps a working package manager (mirrors
 # debootstrap minbase always including apt) and the caller's chroot upgrade
 # step has a binary to run; hardening.sh strips it back out for 'micro'.
