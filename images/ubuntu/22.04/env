@@ -1,0 +1,5 @@
+SUITE=jammy
+VERSION=22.04
+EXTRA_TAGS=jammy
+# Pinned snapshot.ubuntu.com timestamp; empty = live mirrors.
+SNAPSHOT=

@@ -1,21 +1,48 @@
 #!/usr/bin/env bash
-# Build a minimal Debian rootfs with debootstrap (minbase variant).
-# If SNAPSHOT is provided, the build is fully pinned to snapshot.debian.org
-# (reproducible: same inputs -> same package set).
-# Usage: build-rootfs.sh <rootfs-dir> <suite> [snapshot-timestamp]
+# Build a minimal deb-family (Debian or Ubuntu) rootfs with debootstrap
+# (minbase variant). If SNAPSHOT is provided, the build is fully pinned to
+# a snapshot mirror (reproducible: same inputs -> same package set).
+# Usage: build-rootfs-deb.sh <rootfs-dir> <debian|ubuntu> <suite> <keyring-path> [snapshot-timestamp]
 set -euo pipefail
 
 ROOTFS="${1:?rootfs dir required}"
-SUITE="${2:?suite required (bookworm|trixie)}"
-SNAPSHOT="${3:-}"
+DISTRO="${2:?distro required (debian|ubuntu)}"
+SUITE="${3:?suite required (e.g. bookworm, noble)}"
+KEYRING="${4:?keyring path required}"
+SNAPSHOT="${5:-}"
 
-if [ -n "${SNAPSHOT}" ]; then
-  MIRROR="https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
-  SEC_MIRROR="https://snapshot.debian.org/archive/debian-security/${SNAPSHOT}"
-else
-  MIRROR="http://deb.debian.org/debian"
-  SEC_MIRROR="http://security.debian.org/debian-security"
-fi
+case "${DISTRO}" in
+  debian)
+    if [ -n "${SNAPSHOT}" ]; then
+      MIRROR="https://snapshot.debian.org/archive/debian/${SNAPSHOT}"
+      SEC_MIRROR="https://snapshot.debian.org/archive/debian-security/${SNAPSHOT}"
+    else
+      MIRROR="http://deb.debian.org/debian"
+      SEC_MIRROR="http://security.debian.org/debian-security"
+    fi
+    ;;
+  ubuntu)
+    # Ubuntu splits the live archive by architecture (amd64/i386 vs
+    # everything else), unlike Debian's single deb.debian.org host.
+    ARCH="$(dpkg --print-architecture)"
+    case "${ARCH}" in
+      amd64|i386) LIVE_HOST="archive.ubuntu.com" ;;
+      *)          LIVE_HOST="ports.ubuntu.com" ;;
+    esac
+    if [ -n "${SNAPSHOT}" ]; then
+      # snapshot.ubuntu.com serves one unified archive tree (security
+      # updates land in the same repo as main on Ubuntu, unlike Debian).
+      MIRROR="https://snapshot.ubuntu.com/ubuntu/${SNAPSHOT}"
+    else
+      MIRROR="http://${LIVE_HOST}/ubuntu"
+    fi
+    SEC_MIRROR="${MIRROR}"
+    ;;
+  *)
+    echo "unsupported distro: ${DISTRO}" >&2
+    exit 1
+    ;;
+esac
 
 # snapshot Release files carry an expired Valid-Until by design; the archive
 # signatures themselves are the originals and still verify, so GPG stays ON.
@@ -25,7 +52,7 @@ debootstrap \
   --variant=minbase \
   --include=ca-certificates,tzdata,netbase \
   --components=main \
-  --keyring=/usr/share/keyrings/debian-archive-keyring.gpg \
+  --keyring="${KEYRING}" \
   "${SUITE}" "${ROOTFS}" "${MIRROR}"
 
 # --- apt sources inside the rootfs (archive + security, pinned if SNAPSHOT) ---

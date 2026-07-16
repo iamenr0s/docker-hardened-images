@@ -19,21 +19,54 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # bare version tags alias micro; bookworm/trixie/latest share these digests
-        tag: ["12", "12-full", "13", "13-full"]
-        repo:
-          - docker.io/${{ vars.DOCKERHUB_ORG }}/debian-hardened
-          - quay.io/${{ vars.QUAY_ORG }}/debian-hardened
+        include:
+          # bare version tags alias micro; suite/codename tags share these digests
+          - { distro: debian, tag: "12" }
+          - { distro: debian, tag: "12-full" }
+          - { distro: debian, tag: "13" }
+          - { distro: debian, tag: "13-full" }
+          - { distro: ubuntu, tag: "22.04" }
+          - { distro: ubuntu, tag: "22.04-full" }
+          - { distro: ubuntu, tag: "24.04" }
+          - { distro: ubuntu, tag: "24.04-full" }
+          - { distro: fedora, tag: "44" }
+          - { distro: fedora, tag: "44-full" }
+          - { distro: fedora, tag: "43" }
+          - { distro: fedora, tag: "43-full" }
+          - { distro: fedora, tag: "42" }
+          - { distro: fedora, tag: "42-full" }
+          - { distro: almalinux, tag: "8" }
+          - { distro: almalinux, tag: "8-full" }
+          - { distro: almalinux, tag: "9" }
+          - { distro: almalinux, tag: "9-full" }
+          - { distro: almalinux, tag: "10" }
+          - { distro: almalinux, tag: "10-full" }
+          - { distro: rockylinux, tag: "8" }
+          - { distro: rockylinux, tag: "8-full" }
+          - { distro: rockylinux, tag: "9" }
+          - { distro: rockylinux, tag: "9-full" }
+          - { distro: rockylinux, tag: "10" }
+          - { distro: rockylinux, tag: "10-full" }
+        registry: [docker.io, quay.io]
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Install grype (SHA-pinned installer, pinned version)
         run: curl -sSfL "https://raw.githubusercontent.com/anchore/grype/${GRYPE_INSTALL_SHA}/install.sh" | sudo sh -s -- -b /usr/local/bin "${GRYPE_VERSION}"
 
+      - name: Resolve repo
+        id: repo
+        run: |
+          if [ "${{ matrix.registry }}" = "docker.io" ]; then
+            echo "ref=docker.io/${{ vars.DOCKERHUB_ORG }}/${{ matrix.distro }}-hardened" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=quay.io/${{ vars.QUAY_ORG }}/${{ matrix.distro }}-hardened" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Scan published image
         id: scan
         continue-on-error: true
         run: |
-          grype "${{ matrix.repo }}:${{ matrix.tag }}" \
+          grype "${{ steps.repo.outputs.ref }}:${{ matrix.tag }}" \
             --config policies/grype.yaml --fail-on high --only-fixed \
             -o json > grype.json
 
@@ -56,8 +89,8 @@ jobs:
               .join('\n');
             if (!vulns) return;  // scan failed for a non-finding reason
             // registry-agnostic title: both registries hold the same digest,
-            // so findings dedupe into one issue per tag
-            const title = `CVEs found in debian-hardened:${{ matrix.tag }}`;
+            // so findings dedupe into one issue per distro+tag
+            const title = `CVEs found in ${{ matrix.distro }}-hardened:${{ matrix.tag }}`;
             const open = await github.rest.issues.listForRepo({
               owner: context.repo.owner, repo: context.repo.repo,
               state: 'open', labels: 'security'
@@ -66,6 +99,6 @@ jobs:
               await github.rest.issues.create({
                 owner: context.repo.owner, repo: context.repo.repo,
                 title, labels: ['security'],
-                body: `Fixable High/Critical vulnerabilities detected (${{ matrix.repo }}:${{ matrix.tag }}):\n\n${vulns}\n\nNightly rebuild should resolve these; investigate if they persist.`
+                body: `Fixable High/Critical vulnerabilities detected (${{ steps.repo.outputs.ref }}:${{ matrix.tag }}):\n\n${vulns}\n\nNightly rebuild should resolve these; investigate if they persist.`
               });
             }

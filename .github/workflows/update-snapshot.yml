@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Bump pinned Debian snapshot
+      - name: Bump pinned deb-family snapshots (Debian + Ubuntu)
         id: bump
         run: |
           scripts/update-snapshot.sh
@@ -30,11 +30,15 @@ jobs:
           # (recursion guard). Falls back to GITHUB_TOKEN if unset.
           token: ${{ secrets.BOT_TOKEN || github.token }}
           branch: bot/snapshot-bump
-          title: "chore: bump Debian snapshot to ${{ steps.bump.outputs.snapshot }}"
-          commit-message: "chore: bump Debian snapshot to ${{ steps.bump.outputs.snapshot }}"
+          title: "chore: bump deb-family snapshot to ${{ steps.bump.outputs.snapshot }}"
+          commit-message: "chore: bump deb-family snapshot to ${{ steps.bump.outputs.snapshot }}"
           labels: dependencies, security
           body: |
-            Automated bump of the pinned snapshot.debian.org timestamp.
+            Automated bump of the pinned snapshot timestamp across every
+            env file that declares one (Debian: snapshot.debian.org,
+            Ubuntu: snapshot.ubuntu.com). RPM-family images (Fedora,
+            AlmaLinux, RockyLinux) have no historical pin and are
+            unaffected — see docs/ADDING_A_DISTRO.md.
 
             Merging this PR is how upstream security patches reach the
             published images. The PR pipeline (build + structure tests +

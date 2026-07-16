@@ -1,0 +1,26 @@
+schemaVersion: 2.0.0
+fileExistenceTests:
+  - name: dnf available
+    path: /usr/bin/dnf
+    shouldExist: true
+  - name: shell available
+    path: /bin/bash
+    shouldExist: true
+  - name: no curl
+    path: /usr/bin/curl
+    shouldExist: false
+  # Fedora 44+ dropped the legacy /etc/pki/tls/certs/ca-bundle.crt symlink;
+  # this is the canonical bundle everything else links to.
+  - name: CA certificates present
+    path: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+    shouldExist: true
+commandTests:
+  - name: no setuid binaries
+    command: "sh"
+    args: ["-c", "find / -xdev -perm /6000 -type f | wc -l"]
+    # anchored: expectedOutput entries are regexes, bare "0" would match "10"
+    expectedOutput: ["^0\\s*$"]
+  - name: root account locked
+    command: "sh"
+    args: ["-c", "grep -c '^root:[*!]' /etc/shadow"]
+    expectedOutput: ["^1\\s*$"]

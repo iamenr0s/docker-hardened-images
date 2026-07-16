@@ -1,0 +1,30 @@
+schemaVersion: 2.0.0
+metadataTest:
+  user: "65532:65532"
+fileExistenceTests:
+  - name: no shell
+    path: /bin/sh
+    shouldExist: false
+  - name: no bash
+    path: /bin/bash
+    shouldExist: false
+  - name: no dnf
+    path: /usr/bin/dnf
+    shouldExist: false
+  - name: no rpm binary
+    path: /usr/bin/rpm
+    shouldExist: false
+  - name: no dnf configuration
+    path: /etc/dnf
+    shouldExist: false
+  - name: rpm database kept for scanners
+    path: /var/lib/rpm
+    shouldExist: true
+  # Fedora 44+ dropped the legacy /etc/pki/tls/certs/ca-bundle.crt symlink;
+  # this is the canonical bundle everything else links to.
+  - name: CA certificates present
+    path: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+    shouldExist: true
+  - name: nonroot home
+    path: /home/nonroot
+    shouldExist: true

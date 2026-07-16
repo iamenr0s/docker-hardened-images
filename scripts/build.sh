@@ -33,11 +33,16 @@ OUTPUT="--load"
 # --load cannot handle multi-platform; restrict to host arch for local builds
 [ "${OUTPUT}" = "--load" ] && PLATFORMS="linux/$(docker version -f '{{.Server.Arch}}')"
 
+# Forward all distro-family build-args unconditionally: deb-family
+# Dockerfiles consume SUITE/SNAPSHOT, rpm-family ones consume VERSION.
+# buildx warns (does not fail) on unconsumed build-args, so one build.sh
+# works for every distro without a per-family case statement.
 # shellcheck disable=SC2086  # OUTPUT is a single flag, intentionally unquoted
 docker buildx build \
   --platform "${PLATFORMS}" \
   --target "${FLAVOR}" \
-  --build-arg SUITE="${SUITE}" \
+  --build-arg SUITE="${SUITE:-}" \
+  --build-arg VERSION="${VERSION}" \
   --build-arg SNAPSHOT="${SNAPSHOT:-}" \
   --provenance=mode=max \
   --sbom=false \

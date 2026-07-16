@@ -15,15 +15,18 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       # Quay only exposes ~3 months of daily pull stats (no all-time
-      # counter), so the badge shows pulls over that window.
+      # counter), so the badge shows pulls over that window. One badge per
+      # distro repo (pulls are repo-wide, not per-version).
       - name: Generate badge JSON
         run: |
           mkdir -p badges
-          pulls=$(curl -sf "https://quay.io/api/v1/repository/iamenr0s/debian-hardened?includeStats=true" \
-            | jq '[.stats[].count] | add // 0')
-          jq -n --argjson pulls "$pulls" \
-            '{schemaVersion: 1, label: "quay pulls/3mo", message: ($pulls | tostring), namedLogo: "redhat", color: "red"}' \
-            > badges/quay-debian-hardened.json
+          for DISTRO in debian ubuntu fedora almalinux rockylinux; do
+            pulls=$(curl -sf "https://quay.io/api/v1/repository/iamenr0s/${DISTRO}-hardened?includeStats=true" \
+              | jq '[.stats[].count] | add // 0')
+            jq -n --argjson pulls "$pulls" \
+              '{schemaVersion: 1, label: "quay pulls/3mo", message: ($pulls | tostring), namedLogo: "redhat", color: "red"}' \
+              > "badges/quay-${DISTRO}-hardened.json"
+          done
 
       # Published to the orphan "badges" branch, NOT main: pushes to main
       # trigger release.yml and are gated by branch protection.
