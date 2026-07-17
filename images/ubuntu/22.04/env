@@ -1,5 +1,6 @@
 SUITE=jammy
 VERSION=22.04
 EXTRA_TAGS=jammy
-# Pinned snapshot.ubuntu.com timestamp; empty = live mirrors.
-SNAPSHOT=20260716T000000Z
+# Must stay empty (live mirrors): snapshot.ubuntu.com has no ubuntu-ports
+# tree, so a pin breaks the arm64 leg of the multi-arch build.
+SNAPSHOT=
