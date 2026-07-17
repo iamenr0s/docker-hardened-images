@@ -2,4 +2,4 @@ SUITE=noble
 VERSION=24.04
 EXTRA_TAGS=noble
 # Pinned snapshot.ubuntu.com timestamp; empty = live mirrors.
-SNAPSHOT=
+SNAPSHOT=20260716T000000Z
