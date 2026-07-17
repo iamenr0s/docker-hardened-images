@@ -19,7 +19,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
+        # image must be a real axis (not include:): include entries only
+        # layer extra keys onto the registry axis, overwriting each other,
+        # so only the last distro/tag pair ever ran.
+        image:
           # bare version tags alias micro; suite/codename tags share these digests
           - { distro: debian, tag: "12" }
           - { distro: debian, tag: "12-full" }
@@ -57,16 +60,16 @@ jobs:
         id: repo
         run: |
           if [ "${{ matrix.registry }}" = "docker.io" ]; then
-            echo "ref=docker.io/${{ vars.DOCKERHUB_ORG }}/${{ matrix.distro }}-hardened" >> "$GITHUB_OUTPUT"
+            echo "ref=docker.io/${{ vars.DOCKERHUB_ORG }}/${{ matrix.image.distro }}-hardened" >> "$GITHUB_OUTPUT"
           else
-            echo "ref=quay.io/${{ vars.QUAY_ORG }}/${{ matrix.distro }}-hardened" >> "$GITHUB_OUTPUT"
+            echo "ref=quay.io/${{ vars.QUAY_ORG }}/${{ matrix.image.distro }}-hardened" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Scan published image
         id: scan
         continue-on-error: true
         run: |
-          grype "${{ steps.repo.outputs.ref }}:${{ matrix.tag }}" \
+          grype "${{ steps.repo.outputs.ref }}:${{ matrix.image.tag }}" \
             --config policies/grype.yaml --fail-on high --only-fixed \
             -o json > grype.json
 
@@ -92,13 +95,13 @@ jobs:
           mkdir -p badge
           jq -n --arg msg "$msg" --arg color "$color" \
             '{schemaVersion: 1, label: "CVEs", message: $msg, color: $color}' \
-            > "badge/cve-${{ matrix.distro }}-${{ matrix.tag }}.json"
+            > "badge/cve-${{ matrix.image.distro }}-${{ matrix.image.tag }}.json"
 
       - name: Upload badge artifact
         if: matrix.registry == 'quay.io'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: cve-badge-${{ matrix.distro }}-${{ matrix.tag }}
+          name: cve-badge-${{ matrix.image.distro }}-${{ matrix.image.tag }}
           path: badge/
           if-no-files-found: ignore
 
@@ -122,7 +125,7 @@ jobs:
             if (!vulns) return;  // scan failed for a non-finding reason
             // registry-agnostic title: both registries hold the same digest,
             // so findings dedupe into one issue per distro+tag
-            const title = `CVEs found in ${{ matrix.distro }}-hardened:${{ matrix.tag }}`;
+            const title = `CVEs found in ${{ matrix.image.distro }}-hardened:${{ matrix.image.tag }}`;
             const open = await github.rest.issues.listForRepo({
               owner: context.repo.owner, repo: context.repo.repo,
               state: 'open', labels: 'security'
@@ -131,7 +134,7 @@ jobs:
               await github.rest.issues.create({
                 owner: context.repo.owner, repo: context.repo.repo,
                 title, labels: ['security'],
-                body: `Fixable High/Critical vulnerabilities detected (${{ steps.repo.outputs.ref }}:${{ matrix.tag }}):\n\n${vulns}\n\nNightly rebuild should resolve these; investigate if they persist.`
+                body: `Fixable High/Critical vulnerabilities detected (${{ steps.repo.outputs.ref }}:${{ matrix.image.tag }}):\n\n${vulns}\n\nNightly rebuild should resolve these; investigate if they persist.`
               });
             }
 
