@@ -64,6 +64,11 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
+        with:
+          # Pin the emulator: binfmt:latest (qemu 10.2.3) segfaults running the
+          # 2026-07-17 jammy glibc's ldconfig under aarch64 user-mode emulation
+          # (LP#2072564 class). v8.1.5 is the long-time binfmt stable default.
+          image: docker.io/tonistiigi/binfmt:qemu-v8.1.5@sha256:2d2918e86e5327d0661f7083d67a95280b0f7be8f77ed79a8418f81d7d90ce6f
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Login Docker Hub
