@@ -2,6 +2,30 @@ name: release
 on:
   push:
     branches: [main]
+    # Skip publishing a full signed release for changes that cannot affect
+    # the built images. scripts/, policies/, images/ and this workflow keep
+    # triggering. Explicit ignore list (not an allow-list) so new files
+    # fail safe: anything unlisted still triggers a release.
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
+      - "LICENSE"
+      - "CODE_OF_CONDUCT.md"
+      - "CONTRIBUTING.md"
+      - "SECURITY.md"
+      - ".gitignore"
+      - ".hadolint.yaml"     # lint config; enforced in pr.yml only
+      - "Makefile"           # local-dev entry point; release.yml calls scripts/ directly
+      - "tests/**"           # structure tests; run in pr.yml, not here
+      - ".github/CODEOWNERS"
+      - ".github/dependabot.yml"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+      - ".github/workflows/pr.yml"
+      - ".github/workflows/nightly.yml"
+      - ".github/workflows/rescan.yml"
+      - ".github/workflows/quay-pulls-badge.yml"
+      - ".github/workflows/update-snapshot.yml"
   workflow_dispatch:
   workflow_call:
 
