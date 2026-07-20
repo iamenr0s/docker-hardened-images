@@ -50,9 +50,10 @@ jobs:
             without manual intervention while code changes still need review.
 
       # Arms auto-merge; GitHub merges once the required checks on main's
-      # branch protection pass. Merging with GITHUB_TOKEN does not trigger
-      # release.yml's push run — the nightly rebuild (02:17 UTC) publishes
-      # the bumped snapshot instead.
+      # branch protection pass. release.yml explicitly skips the resulting
+      # push (see its 'chore: bump deb-family snapshot to' guard) — the
+      # 02:17 UTC nightly rebuild publishes the bumped snapshot instead,
+      # avoiding a same-day duplicate publish.
       - name: Enable auto-merge
         if: steps.pr.outputs.pull-request-number
         env:

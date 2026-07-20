@@ -49,6 +49,16 @@ env:
 
 jobs:
   release:
+    # Skip when this run IS the automated snapshot-bump merge: the 02:17 UTC
+    # nightly rebuild (workflow_call, not a 'push' event) already republishes
+    # with the just-bumped snapshot a short while later, so triggering here
+    # too would publish everything twice with identical content. Only
+    # matches the exact commit-message prefix update-snapshot.yml's PR title
+    # uses — any other push to main (code, Dockerfile, manual env edits)
+    # runs normally.
+    if: >-
+      github.event_name != 'push' ||
+      !startsWith(github.event.head_commit.message, 'chore: bump deb-family snapshot to ')
     # Ubuntu matrix entries set `runner: ubuntu-24.04-arm` (native arm64,
     # free for public repos) so their arm64 leg runs real hardware instead
     # of qemu-aarch64 user-mode emulation, which segfaults intermittently

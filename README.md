@@ -237,8 +237,11 @@ docs/ADDING_A_DISTRO.md  contract for new distributions
    - Save it as a repo secret named `BOT_TOKEN`
      (`gh secret set BOT_TOKEN`); `update-snapshot.yml` picks it up
      automatically and falls back to `GITHUB_TOKEN` when absent.
-   Bonus: merges made with the PAT trigger `release.yml` immediately,
-   instead of waiting for the 02:17 UTC nightly rebuild.
+   Note: the bump merge itself does not trigger a publish — `release.yml`
+   skips runs whose commit message matches the bump title, so the
+   02:17 UTC nightly rebuild is the single daily publish (avoids
+   double-publishing identical content same-day). Run `release.yml`
+   manually (`workflow_dispatch`) if you need to publish sooner.
 5. Branch protection on `main`: enable **auto-merge** and require status
    checks. With `BOT_TOKEN` in place, require the `pr` checks (and
    optionally review from Code Owners — `.github/CODEOWNERS` covers every
