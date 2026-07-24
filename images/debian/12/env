@@ -3,4 +3,4 @@ VERSION=12
 EXTRA_TAGS=bookworm
 # Pinned snapshot.debian.org timestamp - bumped automatically by
 # .github/workflows/update-snapshot.yml (this is how patches arrive)
-SNAPSHOT=20260722T000000Z
+SNAPSHOT=20260723T000000Z
