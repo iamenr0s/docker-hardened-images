@@ -47,6 +47,21 @@ jobs:
         with:
           dockerfile: images/rockylinux/Dockerfile
           config: .hadolint.yaml
+      - name: hadolint (centos)
+        uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          dockerfile: images/centos/Dockerfile
+          config: .hadolint.yaml
+      - name: hadolint (oraclelinux)
+        uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          dockerfile: images/oraclelinux/Dockerfile
+          config: .hadolint.yaml
+      - name: hadolint (amazonlinux)
+        uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
+        with:
+          dockerfile: images/amazonlinux/Dockerfile
+          config: .hadolint.yaml
       - name: shellcheck
         run: |
           sudo apt-get update -q && sudo apt-get install -y shellcheck
@@ -86,6 +101,16 @@ jobs:
           - { distro: rockylinux, version: "9", flavor: micro }
           - { distro: rockylinux, version: "10", flavor: full }
           - { distro: rockylinux, version: "10", flavor: micro }
+          - { distro: centos, version: "9", flavor: full }
+          - { distro: centos, version: "9", flavor: micro }
+          - { distro: centos, version: "10", flavor: full }
+          - { distro: centos, version: "10", flavor: micro }
+          - { distro: oraclelinux, version: "8", flavor: full }
+          - { distro: oraclelinux, version: "8", flavor: micro }
+          - { distro: oraclelinux, version: "9", flavor: full }
+          - { distro: oraclelinux, version: "9", flavor: micro }
+          - { distro: amazonlinux, version: "2023", flavor: full }
+          - { distro: amazonlinux, version: "2023", flavor: micro }
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3

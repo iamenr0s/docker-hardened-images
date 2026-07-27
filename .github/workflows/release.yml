@@ -61,6 +61,16 @@ jobs:
           - { distro: rockylinux, version: "9", flavor: micro }
           - { distro: rockylinux, version: "10", flavor: full }
           - { distro: rockylinux, version: "10", flavor: micro }
+          - { distro: centos, version: "9", flavor: full }
+          - { distro: centos, version: "9", flavor: micro }
+          - { distro: centos, version: "10", flavor: full }
+          - { distro: centos, version: "10", flavor: micro }
+          - { distro: oraclelinux, version: "8", flavor: full }
+          - { distro: oraclelinux, version: "8", flavor: micro }
+          - { distro: oraclelinux, version: "9", flavor: full }
+          - { distro: oraclelinux, version: "9", flavor: micro }
+          - { distro: amazonlinux, version: "2023", flavor: full }
+          - { distro: amazonlinux, version: "2023", flavor: micro }
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0

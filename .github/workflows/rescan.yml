@@ -47,6 +47,16 @@ jobs:
           - { distro: rockylinux, tag: "9-full" }
           - { distro: rockylinux, tag: "10" }
           - { distro: rockylinux, tag: "10-full" }
+          - { distro: centos, tag: "9" }
+          - { distro: centos, tag: "9-full" }
+          - { distro: centos, tag: "10" }
+          - { distro: centos, tag: "10-full" }
+          - { distro: oraclelinux, tag: "8" }
+          - { distro: oraclelinux, tag: "8-full" }
+          - { distro: oraclelinux, tag: "9" }
+          - { distro: oraclelinux, tag: "9-full" }
+          - { distro: amazonlinux, tag: "2023" }
+          - { distro: amazonlinux, tag: "2023-full" }
         registry: [docker.io, quay.io]
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
