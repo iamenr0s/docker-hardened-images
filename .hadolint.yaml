@@ -3,3 +3,4 @@ ignored:
   - DL3059   # consecutive RUNs are in discarded bootstrap stages; final images are COPY-from-scratch
 trustedRegistries:
   - docker.io
+  - quay.io
