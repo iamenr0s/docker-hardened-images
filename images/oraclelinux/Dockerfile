@@ -13,6 +13,18 @@
 # Oracle's release package is version-specific (oraclelinux-release-elN),
 # unlike Alma/Rocky's single unversioned package name — interpolated from
 # VERSION below rather than hardcoded.
+#
+# ponytail: Oracle Linux repo files resolve their mirrorlist through custom
+# dnf vars $ociregion/$ocidomain (owned by oraclelinux-release-elN, defined
+# under /etc/dnf/vars/) that images/common/build-rootfs-rpm.sh has never
+# had to propagate to the installroot before (Fedora/Alma/Rocky use none).
+# Oracle Linux ships dnf4, whose branch in the script passes only
+# -c /etc/dnf/dnf.conf, which may not carry varsdir. Not proven broken
+# (Alma/Rocky pass CI on the same dnf4 path today, but they define no
+# custom vars, so this is untested territory). If the initial dnf install
+# resolves a malformed baseurl, add --setopt=varsdir=/etc/dnf/vars to the
+# dnf4 HOST_REPOS array in build-rootfs-rpm.sh (safe for siblings:
+# Alma/Rocky/Fedora define no custom vars, so this is a no-op for them).
 
 ARG VERSION=9
 

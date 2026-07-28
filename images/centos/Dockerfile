@@ -12,9 +12,25 @@
 #
 # docker.io/centos is EOL/unmaintained (deprecated June 2024) - CentOS
 # Stream bootstraps from quay.io/centos/centos instead. Its image tags are
-# "streamN" but dnf's $releasever must be the bare "N" (repo baseurls are
-# .../N-stream/BaseOS/...), so the FROM line interpolates "stream${VERSION}"
-# while build-rootfs-rpm.sh gets the bare VERSION as releasever.
+# "streamN" but dnf's $releasever must be the bare "N": CentOS Stream's repo
+# baseurls/metalinks actually resolve through the custom dnf variable
+# $stream (owned by centos-stream-release, /etc/dnf/vars/stream), not
+# $releasever — $releasever only shows up in the repo file's display
+# name= field. So the FROM line interpolates "stream${VERSION}" while
+# build-rootfs-rpm.sh gets the bare VERSION as releasever. See the
+# $stream varsdir contingency note below.
+#
+# ponytail: CentOS Stream defines a custom dnf var ($stream) that
+# images/common/build-rootfs-rpm.sh has never had to propagate to the
+# installroot before (Fedora/Alma/Rocky use none). The dnf5 branch's
+# --use-host-config covers this; the dnf4 branch (CentOS Stream 9 only —
+# Stream 10 uses dnf5) passes only -c /etc/dnf/dnf.conf, which may not
+# carry varsdir. Not proven broken (Alma/Rocky pass CI on the same dnf4
+# path today, but they define no custom vars, so this is untested
+# territory). If the initial dnf install resolves a malformed baseurl, add
+# --setopt=varsdir=/etc/dnf/vars to the dnf4 HOST_REPOS array in
+# build-rootfs-rpm.sh (safe for siblings: Alma/Rocky/Fedora define no
+# custom vars, so this is a no-op for them).
 
 ARG VERSION=10
 

@@ -16,6 +16,7 @@ commandTests:
   - name: no setuid binaries
     command: "sh"
     args: ["-c", "find / -xdev -perm /6000 -type f | wc -l"]
+    # anchored: expectedOutput entries are regexes, bare "0" would match "10"
     expectedOutput: ["^0\\s*$"]
   - name: root account locked
     command: "sh"

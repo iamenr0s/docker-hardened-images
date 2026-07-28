@@ -20,6 +20,12 @@
 #       cp /etc/yum.repos.d/amazonlinux.repo /rootfs/etc/yum.repos.d/amazonlinux.repo
 # added as its own RUN line directly after the build-rootfs-rpm.sh call below.
 
+# AL2023 pins releasever to a dated point release (2023.x.yyyymmdd) rather
+# than a bare major version; "latest" is the alias AWS's own
+# barebones-container docs use to always resolve the current one. VERSION
+# stays "2023" throughout the rest of this file because it drives the
+# Docker image tag, not the dnf releasever.
+
 ARG VERSION=2023
 
 # ------------------------------------------------------------------ bootstrap
@@ -29,7 +35,7 @@ ARG VERSION
 COPY common/build-rootfs-rpm.sh common/hardening.sh /opt/build/
 RUN chmod +x /opt/build/*.sh
 
-RUN /opt/build/build-rootfs-rpm.sh /rootfs "${VERSION}" system-release
+RUN /opt/build/build-rootfs-rpm.sh /rootfs latest system-release
 
 # apply the latest security updates inside the new rootfs before sealing it.
 # unlike debootstrap, `dnf --installroot` never leaves a resolv.conf in the

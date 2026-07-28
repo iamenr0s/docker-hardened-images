@@ -2,8 +2,8 @@
 
 Each distro follows the same contract, so CI and scripts work unchanged.
 Two families are implemented — deb (Debian, Ubuntu) and rpm (Fedora,
-AlmaLinux, RockyLinux) — and a new distro joins whichever family it belongs
-to:
+AlmaLinux, RockyLinux, CentOS Stream, Oracle Linux, Amazon Linux) — and a
+new distro joins whichever family it belongs to:
 
 1. `images/<distro>/Dockerfile` — multi-stage with targets `full` and
    `micro`, built from the distro's own bootstrap tool:
@@ -14,10 +14,18 @@ to:
      Debian and Ubuntu share this one script — see its `case "${DISTRO}"`
      branch for mirror/arch handling (Ubuntu splits live mirrors by arch
      and has no separate security host, unlike Debian).
-   - **rpm family**: bootstrap `FROM <distro>:${VERSION}`, call
+   - **rpm family**: bootstrap `FROM <distro>:${VERSION}` — or a full
+     registry path if the distro's `docker.io` image is deprecated/EOL
+     (CentOS Stream bootstraps from `quay.io/centos/centos:stream${VERSION}`
+     since `docker.io/centos` is unmaintained). A non-`docker.io` registry
+     must also be added to `.hadolint.yaml`'s `trustedRegistries`, or
+     hadolint's DL3026 rejects the Dockerfile. Call
      `images/common/build-rootfs-rpm.sh /rootfs "${VERSION}" <release-package>`
      (e.g. `fedora-release`, `almalinux-release`, `rocky-release`), then
      `chroot /rootfs sh -c 'dnf upgrade -y && dnf clean all && rm -rf /var/cache/dnf/*'`.
+     `<release-package>` may need to be version-specific rather than one
+     fixed name (Oracle Linux uses `oraclelinux-release-el${VERSION}`,
+     interpolated per version, instead of a single unversioned package).
      A fresh installroot has no repo config of its own, so the script uses
      `--use-host-config` to borrow the bootstrap image's baked-in repos for
      the initial install, and explicitly installs the distro's

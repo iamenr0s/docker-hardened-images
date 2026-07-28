@@ -198,11 +198,12 @@ images/
     Dockerfile                      shared multi-stage build (targets: full, micro)
     12/env  13/env  22.04/env  ...  per-version metadata: SUITE, EXTRA_TAGS, SNAPSHOT pin
   fedora/  almalinux/  rockylinux/  rpm-family: dnf --installroot
+  centos/  oraclelinux/  amazonlinux/
     Dockerfile
     44/env  9/env  10/env  ...      per-version metadata: VERSION, EXTRA_TAGS (no SNAPSHOT)
   common/
     build-rootfs-deb.sh   debootstrap minbase for debian|ubuntu, snapshot-aware
-    build-rootfs-rpm.sh   dnf --installroot for fedora|almalinux|rockylinux
+    build-rootfs-rpm.sh   dnf --installroot for fedora|almalinux|rockylinux|centos|oraclelinux|amazonlinux
     hardening.sh          setuid strip, root lock, micro minimisation (deb|rpm aware)
 scripts/
   build.sh               buildx multi-arch build/push with tag fan-out
