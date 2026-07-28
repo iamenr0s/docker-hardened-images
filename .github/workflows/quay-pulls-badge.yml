@@ -24,7 +24,7 @@ jobs:
       - name: Generate badge JSON
         run: |
           mkdir -p badges
-          for DISTRO in debian ubuntu fedora almalinux rockylinux; do
+          for DISTRO in debian ubuntu fedora almalinux rockylinux centos oraclelinux amazonlinux; do
             pulls=$(curl -sf "https://quay.io/api/v1/repository/iamenr0s/${DISTRO}-hardened?includeStats=true" \
               | jq '[.stats[].count] | add // 0')
             jq -n --argjson pulls "$pulls" \
