@@ -84,6 +84,8 @@ jobs:
           - { distro: ubuntu, version: "22.04", flavor: micro, runner: ubuntu-24.04-arm }
           - { distro: ubuntu, version: "24.04", flavor: full, runner: ubuntu-24.04-arm }
           - { distro: ubuntu, version: "24.04", flavor: micro, runner: ubuntu-24.04-arm }
+          - { distro: ubuntu, version: "26.04", flavor: full, runner: ubuntu-24.04-arm }
+          - { distro: ubuntu, version: "26.04", flavor: micro, runner: ubuntu-24.04-arm }
           - { distro: fedora, version: "44", flavor: full }
           - { distro: fedora, version: "44", flavor: micro }
           - { distro: fedora, version: "43", flavor: full }
