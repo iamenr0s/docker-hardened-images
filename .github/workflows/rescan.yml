@@ -32,6 +32,8 @@ jobs:
           - { distro: ubuntu, tag: "22.04-full" }
           - { distro: ubuntu, tag: "24.04" }
           - { distro: ubuntu, tag: "24.04-full" }
+          - { distro: ubuntu, tag: "26.04" }
+          - { distro: ubuntu, tag: "26.04-full" }
           - { distro: fedora, tag: "44" }
           - { distro: fedora, tag: "44-full" }
           - { distro: fedora, tag: "43" }

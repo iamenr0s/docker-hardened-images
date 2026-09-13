@@ -1,0 +1,6 @@
+SUITE=resolute
+VERSION=26.04
+EXTRA_TAGS=resolute
+# Must stay empty (live mirrors): snapshot.ubuntu.com has no ubuntu-ports
+# tree, so a pin breaks the arm64 leg of the multi-arch build.
+SNAPSHOT=

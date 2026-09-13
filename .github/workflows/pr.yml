@@ -83,6 +83,8 @@ jobs:
           - { distro: ubuntu, version: "22.04", flavor: micro }
           - { distro: ubuntu, version: "24.04", flavor: full }
           - { distro: ubuntu, version: "24.04", flavor: micro }
+          - { distro: ubuntu, version: "26.04", flavor: full }
+          - { distro: ubuntu, version: "26.04", flavor: micro }
           - { distro: fedora, version: "44", flavor: full }
           - { distro: fedora, version: "44", flavor: micro }
           - { distro: fedora, version: "43", flavor: full }
