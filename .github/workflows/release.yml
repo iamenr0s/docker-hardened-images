@@ -122,10 +122,18 @@ jobs:
           # reproducibility). NOTE: this does NOT fix the aarch64 ldconfig
           # segfault (LP#2072564 class) — that bug is a host/qemu-user
           # interaction that reproduced identically on both qemu 10.2.3 and
-          # this 8.1.5 pin, non-deterministically. Ubuntu's arm64 leg was
-          # moved to a native runner instead (see matrix `runner:` above);
-          # this pin still applies to the other distros' emulated arm64 leg.
-          image: docker.io/tonistiigi/binfmt:qemu-v8.1.5@sha256:2d2918e86e5327d0661f7083d67a95280b0f7be8f77ed79a8418f81d7d90ce6f
+          # 8.1.5, non-deterministically. Ubuntu's arm64 leg was moved to a
+          # native runner instead (see matrix `runner:` above); this pin
+          # still applies to the other distros' emulated arm64 leg, and to
+          # Ubuntu's own amd64 leg (built under qemu-amd64 emulation on that
+          # same native arm64 runner). Bumped from 8.1.5 to 10.1.3: 8.1.5
+          # mishandles O_LARGEFILE for qemu-amd64 emulation, which GNU tar
+          # >=1.35-9 (Ubuntu 26.04's tar) relies on — every debootstrap
+          # extraction syscall failed with ENOSYS (moby/buildkit#6475,
+          # fixed upstream in qemu 10.1). That's a different emulation
+          # direction/bug than the ldconfig segfault above, so this bump
+          # doesn't reintroduce it.
+          image: docker.io/tonistiigi/binfmt:qemu-v10.1.3@sha256:ec9aa508f3db5856e19fe91cbada91562da92681be589629215e76e7a45305d6
       - uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
       - name: Login Docker Hub
