@@ -49,12 +49,18 @@ esac
 # signatures themselves are the originals and still verify, so GPG stays ON.
 [ -n "${SNAPSHOT}" ] && export DEBOOTSTRAP_CHECK_VALID_UNTIL=no
 
-debootstrap \
+if ! debootstrap \
   --variant=minbase \
   --include=ca-certificates,tzdata,netbase \
   --components=main \
   --keyring="${KEYRING}" \
-  "${SUITE}" "${ROOTFS}" "${MIRROR}"
+  "${SUITE}" "${ROOTFS}" "${MIRROR}"; then
+  # debootstrap's own stderr truncates the real tar/dpkg-deb error; the
+  # full trace (incl. the actual extraction failure) only lives in its log.
+  echo "=== debootstrap.log ===" >&2
+  cat "${ROOTFS}/debootstrap/debootstrap.log" >&2 2>/dev/null || true
+  exit 1
+fi
 
 # --- apt sources inside the rootfs (archive + security, pinned if SNAPSHOT) ---
 OPTS=""
