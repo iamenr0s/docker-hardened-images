@@ -49,6 +49,13 @@ env:
 
 jobs:
   release:
+    # Matrix job names auto-append every matrix key from the include entry,
+    # in order — without this override, Ubuntu's rows (which carry a
+    # `runner:` key the other distros don't) would show a trailing
+    # ", ubuntu-24.04-arm" that the rest of the matrix doesn't, even though
+    # every row does the same amd64+arm64 multi-arch build. Name explicitly
+    # so all distros display consistently.
+    name: release (${{ matrix.distro }}, ${{ matrix.version }}, ${{ matrix.flavor }})
     # Skip when this run IS the automated snapshot-bump merge: the 02:17 UTC
     # nightly rebuild (workflow_call, not a 'push' event) already republishes
     # with the just-bumped snapshot a short while later, so triggering here
