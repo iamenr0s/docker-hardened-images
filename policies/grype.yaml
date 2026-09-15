@@ -215,6 +215,114 @@ ignore:
   - vulnerability: CVE-2026-11940
     package: { name: python3-libs }
     reason: "CentOS Stream 10 el10_N version-scheme mismatch (see header). Verified mirror.stream.centos.org tops out at python3-libs 3.12.13-3.el10, not the 3.12.14-1.el10_2 NVR grype expects. Review 2026-08-28."
+  - vulnerability: CVE-2026-18798
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org tops out at openssl-libs 3.5.8-1.el9/.el10, not the el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-18798
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63076
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63076
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-14456
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-14456
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-14457
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-14457
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63072
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63072
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63073
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63073
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63074
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63074
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63075
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-63075
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-54874
+    package: { name: openssl-libs }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-54874
+    package: { name: openssl-fips-provider }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-13757
+    package: { name: p11-kit }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org tops out at p11-kit 0.26.4-1.el9/.el10, not the el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-13757
+    package: { name: p11-kit-trust }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Review 2026-10-13."
+  - vulnerability: CVE-2026-14164
+    package: { name: libarchive }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Verified mirror.stream.centos.org tops out at libarchive 3.5.3-11.el9, not the 3.5.3-11.el9_8 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-41989
+    package: { name: libgcrypt }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Verified mirror.stream.centos.org tops out at libgcrypt 1.10.0-13.el9, not the 1.10.0-13.el9_8 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-59843
+    package: { name: libssh }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Verified mirror.stream.centos.org tops out at libssh 0.10.4-19.el9, not the 0.10.4-19.el9_8 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-59843
+    package: { name: libssh-config }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59844
+    package: { name: libssh }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59844
+    package: { name: libssh-config }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59845
+    package: { name: libssh }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59845
+    package: { name: libssh-config }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59846
+    package: { name: libssh }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59846
+    package: { name: libssh-config }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59847
+    package: { name: libssh }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59847
+    package: { name: libssh-config }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59848
+    package: { name: libssh }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59848
+    package: { name: libssh-config }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59850
+    package: { name: libssh }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-59850
+    package: { name: libssh-config }
+    reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
 
   # Oracle Linux 8/9: every one of these advisories is Oracle's separate
   # FIPS-validated module build (epoch 10, "_fips" suffix, published on
