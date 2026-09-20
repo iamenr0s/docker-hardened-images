@@ -323,6 +323,30 @@ ignore:
   - vulnerability: CVE-2026-59850
     package: { name: libssh-config }
     reason: "CentOS Stream 9 el9_N version-scheme mismatch (see header). Review 2026-10-13."
+  - vulnerability: CVE-2026-63379
+    package: { name: libevent }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org BaseOS tops out at libevent 2.1.12-8.el9 / 2.1.12-16.el10, not the 2.1.13-1.el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-63381
+    package: { name: libevent }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org BaseOS tops out at libevent 2.1.12-8.el9 / 2.1.12-16.el10, not the 2.1.13-1.el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-63382
+    package: { name: libevent }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org BaseOS tops out at libevent 2.1.12-8.el9 / 2.1.12-16.el10, not the 2.1.13-1.el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-63383
+    package: { name: libevent }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org BaseOS tops out at libevent 2.1.12-8.el9 / 2.1.12-16.el10, not the 2.1.13-1.el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-63384
+    package: { name: libevent }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org BaseOS tops out at libevent 2.1.12-8.el9 / 2.1.12-16.el10, not the 2.1.13-1.el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-63385
+    package: { name: libevent }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org BaseOS tops out at libevent 2.1.12-8.el9 / 2.1.12-16.el10, not the 2.1.13-1.el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-63387
+    package: { name: libevent }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org BaseOS tops out at libevent 2.1.12-8.el9 / 2.1.12-16.el10, not the 2.1.13-1.el9_8/el10_2 NVR grype expects. Review 2026-10-13."
+  - vulnerability: CVE-2026-63388
+    package: { name: libevent }
+    reason: "CentOS Stream el9_N/el10_N version-scheme mismatch (see header); affects Stream 9 and 10. Verified mirror.stream.centos.org BaseOS tops out at libevent 2.1.12-8.el9 / 2.1.12-16.el10, not the 2.1.13-1.el9_8/el10_2 NVR grype expects. Review 2026-10-13."
 
   # Oracle Linux 8/9: every one of these advisories is Oracle's separate
   # FIPS-validated module build (epoch 10, "_fips" suffix, published on
