@@ -17,11 +17,13 @@ for ENVFILE in "${ROOT}"/images/*/*/env; do
   grep -q '^SNAPSHOT=' "${ENVFILE}" || continue
   OLD=$(grep -oP '^SNAPSHOT=\K.*' "${ENVFILE}")
   [ -n "${OLD}" ] || continue  # empty pin = deliberately live, leave it alone
-  if [ "${OLD}" != "${NEW}" ]; then
-    sed -i "s/^SNAPSHOT=.*/SNAPSHOT=${NEW}/" "${ENVFILE}"
-    echo "${ENVFILE}: ${OLD} -> ${NEW}"
-    CHANGED=1
-  fi
+  # Never move a pin backwards: a manual mid-day pin (e.g. to pick up a
+  # security fix early) is newer than "yesterday midnight" and must survive.
+  # YYYYMMDDTHHMMSSZ sorts lexically.
+  [[ "${OLD}" < "${NEW}" ]] || continue
+  sed -i "s/^SNAPSHOT=.*/SNAPSHOT=${NEW}/" "${ENVFILE}"
+  echo "${ENVFILE}: ${OLD} -> ${NEW}"
+  CHANGED=1
 done
 
-[ "${CHANGED}" = "1" ] || echo "already at ${NEW}"
+[ "${CHANGED}" = "1" ] || echo "already at or past ${NEW}"
