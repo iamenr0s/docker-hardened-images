@@ -10,7 +10,7 @@
 # built from the live dnf repos baked into the fedora base image, then
 # upgraded to latest at build time. Patches arrive via the nightly rebuild.
 
-ARG VERSION=44
+ARG VERSION=46
 
 # ------------------------------------------------------------------ bootstrap
 FROM fedora:${VERSION} AS bootstrap
