@@ -10,7 +10,7 @@
 # built from the live dnf repos baked into the almalinux base image, then
 # upgraded to latest at build time. Patches arrive via the nightly rebuild.
 
-ARG VERSION=9
+ARG VERSION=10
 
 # ------------------------------------------------------------------ bootstrap
 FROM almalinux:${VERSION} AS bootstrap
