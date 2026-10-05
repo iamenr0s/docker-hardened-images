@@ -26,7 +26,7 @@
 # stays "2023" throughout the rest of this file because it drives the
 # Docker image tag, not the dnf releasever.
 
-ARG VERSION=2023
+ARG VERSION=2027
 
 # ------------------------------------------------------------------ bootstrap
 FROM amazonlinux:${VERSION} AS bootstrap
