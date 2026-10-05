@@ -26,7 +26,7 @@
 # dnf4 HOST_REPOS array in build-rootfs-rpm.sh (safe for siblings:
 # Alma/Rocky/Fedora define no custom vars, so this is a no-op for them).
 
-ARG VERSION=9
+ARG VERSION=10
 
 # ------------------------------------------------------------------ bootstrap
 FROM oraclelinux:${VERSION} AS bootstrap
