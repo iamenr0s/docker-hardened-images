@@ -6,7 +6,7 @@
 #   micro - no package manager, no shell, non-root. Use as the final
 #           runtime base. dpkg status file is kept so scanners work.
 
-ARG SUITE=noble
+ARG SUITE=resolute
 # snapshot.ubuntu.com timestamp; empty = live mirrors (non-reproducible)
 ARG SNAPSHOT=
 
