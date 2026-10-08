@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.27
+# syntax=docker/dockerfile:1.28
 # Hardened minimal Amazon Linux, built from scratch via dnf --installroot.
 # Flavors (build targets):
 #   full  - dnf + shell present. Use as a build stage or when you must
