@@ -1,0 +1,44 @@
+name: autoheal
+# When a nightly rebuild fails, open a PR that bumps the deb-family snapshot
+# pin to *now* (update-snapshot only pins to yesterday-midnight, so same-day
+# upstream fixes are missed). Never merges, never edits CVE ignores — a human
+# reviews the PR; pr.yml proves whether the bump actually clears the gate.
+on:
+  workflow_run:
+    workflows: [nightly-rebuild]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  heal:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Bump deb-family snapshots to now
+        id: bump
+        run: |
+          snap=$(date -u +%Y%m%dT%H%M%SZ)
+          scripts/update-snapshot.sh "$snap"
+          echo "snapshot=$snap" >> "$GITHUB_OUTPUT"
+
+      # No diff (e.g. only RPM distros failed) => no PR; the failure stays
+      # visible on the nightly run for a human to triage.
+      - name: Open PR
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ secrets.BOT_TOKEN || github.token }}  # BOT_TOKEN so pr.yml runs on the PR
+          branch: bot/autoheal
+          title: "fix: autoheal snapshot bump to ${{ steps.bump.outputs.snapshot }}"
+          commit-message: "fix: autoheal snapshot bump to ${{ steps.bump.outputs.snapshot }}"
+          labels: dependencies, security
+          body: |
+            Opened because nightly-rebuild failed (${{ github.event.workflow_run.html_url || 'manual run' }}).
+            Bumps deb-family snapshots to the current time to pick up same-day
+            upstream fixes. Review and merge manually once the pr checks pass.
