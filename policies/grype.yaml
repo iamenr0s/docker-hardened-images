@@ -407,3 +407,49 @@ ignore:
   - vulnerability: ELSA-2026-50149
     package: { name: gnutls }
     reason: "Oracle Linux 9 FIPS-module-track false match (see header). Review 2026-08-28."
+
+  # Nightly 2026-10-09: CentOS Stream el9_N/el10_N scheme mismatch + AlmaLinux 10
+  # mirror lag (repo.almalinux.org tops out at these NVRs; fix is RHEL-only so far).
+  # Pinned to the exact lagging NVR so each rule lapses once a fixed build ships.
+  - vulnerability: CVE-2026-84782
+    package: { name: openssl-libs, version: "1:3.5.8-1.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 1:3.5.8-1.el9. Review 2026-10-16."
+  - vulnerability: CVE-2026-84782
+    package: { name: openssl-libs, version: "1:3.5.8-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 1:3.5.8-1.el10. Review 2026-10-16."
+  - vulnerability: CVE-2026-84782
+    package: { name: openssl-libs, version: "1:3.5.8-1.el10_2.alma.1" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 1:3.5.8-1.el10_2.alma.1. Review 2026-10-16."
+  - vulnerability: CVE-2026-84782
+    package: { name: openssl-fips-provider, version: "1:3.5.8-1.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 1:3.5.8-1.el9. Review 2026-10-16."
+  - vulnerability: CVE-2026-84782
+    package: { name: openssl-fips-provider, version: "1:3.5.8-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 1:3.5.8-1.el10. Review 2026-10-16."
+  - vulnerability: CVE-2026-84782
+    package: { name: openssl-fips-provider, version: "1:3.5.8-1.el10_2.alma.1" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 1:3.5.8-1.el10_2.alma.1. Review 2026-10-16."
+  - vulnerability: CVE-2026-19445
+    package: { name: python3, version: "3.12.14-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10. Review 2026-10-16."
+  - vulnerability: CVE-2026-19445
+    package: { name: python3, version: "3.12.14-1.el10_2" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10_2. Review 2026-10-16."
+  - vulnerability: CVE-2026-19445
+    package: { name: python3-libs, version: "3.12.14-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10. Review 2026-10-16."
+  - vulnerability: CVE-2026-19445
+    package: { name: python3-libs, version: "3.12.14-1.el10_2" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10_2. Review 2026-10-16."
+  - vulnerability: CVE-2026-19553
+    package: { name: python3, version: "3.12.14-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10. Review 2026-10-16."
+  - vulnerability: CVE-2026-19553
+    package: { name: python3, version: "3.12.14-1.el10_2" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10_2. Review 2026-10-16."
+  - vulnerability: CVE-2026-19553
+    package: { name: python3-libs, version: "3.12.14-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10. Review 2026-10-16."
+  - vulnerability: CVE-2026-19553
+    package: { name: python3-libs, version: "3.12.14-1.el10_2" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10_2. Review 2026-10-16."
