@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.27
+# syntax=docker/dockerfile:1.28
 # Hardened minimal Ubuntu, built from scratch via debootstrap.
 # Flavors (build targets):
 #   full  - apt/dpkg + shell present. Use as a build stage or when you
