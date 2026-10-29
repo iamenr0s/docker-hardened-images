@@ -453,3 +453,70 @@ ignore:
   - vulnerability: CVE-2026-19553
     package: { name: python3-libs, version: "3.12.14-1.el10_2" }
     reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream / AlmaLinux 10 mirrors top out at 3.12.14-1.el10_2. Review 2026-10-16."
+
+  # 2026-10-29: CentOS Stream 9/10 + Oracle Linux 9 RHEL-only fixes. Version-pinned to the installed
+  # build so other distros are not suppressed. Mirror check (2026-10-29): mirror.stream.centos.org
+  # tops out at the installed version for every CentOS package below. OL9 entries are NOT mirror-verified.
+  - vulnerability: CVE-2026-103111
+    package: { name: pcre2, version: "10.40-7.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-86145
+    package: { name: pcre2, version: "10.40-7.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-89161
+    package: { name: pcre2, version: "10.40-7.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-103111
+    package: { name: pcre2-syntax, version: "10.40-7.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-86145
+    package: { name: pcre2-syntax, version: "10.40-7.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-89161
+    package: { name: pcre2-syntax, version: "10.40-7.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-103111
+    package: { name: pcre2, version: "10.44-1.4.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-86145
+    package: { name: pcre2, version: "10.44-1.4.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-89161
+    package: { name: pcre2, version: "10.44-1.4.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-103111
+    package: { name: pcre2-syntax, version: "10.44-1.4.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-86145
+    package: { name: pcre2-syntax, version: "10.44-1.4.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-89161
+    package: { name: pcre2-syntax, version: "10.44-1.4.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-111497
+    package: { name: libbrotli, version: "1.0.9-10.el9" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. KEV-listed (EPSS 88%): re-check weekly. Review 2026-11-02."
+  - vulnerability: CVE-2026-111497
+    package: { name: libbrotli, version: "1.1.0-8.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. KEV-listed (EPSS 88%): re-check weekly. Review 2026-11-02."
+  - vulnerability: CVE-2026-114406
+    package: { name: ca-certificates, version: "2026.2.92_v9.0.319-100.1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. CRITICAL: re-check every few days. Review 2026-11-02."
+  - vulnerability: CVE-2026-19445
+    package: { name: python3, version: "3.12.15-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-19553
+    package: { name: python3, version: "3.12.15-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-19445
+    package: { name: python3-libs, version: "3.12.15-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: CVE-2026-19553
+    package: { name: python3-libs, version: "3.12.15-1.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
+  - vulnerability: ELSA-2026-500448
+    package: { name: openssl-libs, version: "1:3.5.8-2.0.1.el9_8" }
+    reason: "grype matches an OL9 FIPS-variant ELSA (el9_8_fips, epoch 10) against the non-FIPS build; not mirror-verified. Review 2026-11-05."
+  - vulnerability: ELSA-2026-500145
+    package: { name: libgcrypt, version: "1.10.0-13.el9_8" }
+    reason: "grype matches an OL9 FIPS-variant ELSA (el9_8_fips, epoch 10) against the non-FIPS build; not mirror-verified. Review 2026-11-05."
