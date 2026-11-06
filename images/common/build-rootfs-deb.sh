@@ -49,12 +49,24 @@ esac
 # signatures themselves are the originals and still verify, so GPG stays ON.
 [ -n "${SNAPSHOT}" ] && export DEBOOTSTRAP_CHECK_VALID_UNTIL=no
 
-if ! debootstrap \
-  --variant=minbase \
-  --include=ca-certificates,tzdata,netbase \
-  --components=main \
-  --keyring="${KEYRING}" \
-  "${SUITE}" "${ROOTFS}" "${MIRROR}"; then
+# snapshot.debian.org intermittently returns 503s; debootstrap has no retry of
+# its own, so one bad stretch would fail the whole build. Re-running into the
+# same rootfs is safe: it re-fetches what is missing and re-extracts.
+bootstrap_ok=0
+for attempt in 1 2 3; do
+  if debootstrap \
+    --variant=minbase \
+    --include=ca-certificates,tzdata,netbase \
+    --components=main \
+    --keyring="${KEYRING}" \
+    "${SUITE}" "${ROOTFS}" "${MIRROR}"; then
+    bootstrap_ok=1
+    break
+  fi
+  echo "debootstrap attempt ${attempt}/3 failed" >&2
+  if [ "${attempt}" -lt 3 ]; then sleep $((attempt * 30)); fi
+done
+if [ "${bootstrap_ok}" -ne 1 ]; then
   # debootstrap's own stderr truncates the real tar/dpkg-deb error; the
   # full trace (incl. the actual extraction failure) only lives in its log.
   echo "=== debootstrap.log ===" >&2
