@@ -500,8 +500,8 @@ ignore:
     package: { name: libbrotli, version: "1.1.0-8.el10" }
     reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. KEV-listed (EPSS 88%): re-check weekly. Review 2026-11-02."
   - vulnerability: CVE-2026-114406
-    package: { name: ca-certificates, version: "2026.2.92_v9.0.319-100.1.el10" }
-    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. CRITICAL: re-check every few days. Review 2026-11-02."
+    package: { name: ca-certificates, version: "2026.2.92_v9.0.319-100.3.el10" }
+    reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. CRITICAL: re-check every few days. Review 2026-11-09."
   - vulnerability: CVE-2026-19445
     package: { name: python3, version: "3.12.15-1.el10" }
     reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
