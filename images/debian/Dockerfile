@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.28
+# syntax=docker/dockerfile:1.29
 # Hardened minimal Debian, built from scratch via debootstrap.
 # Flavors (build targets):
 #   full  - apt/dpkg + shell present. Use as a build stage or when you
