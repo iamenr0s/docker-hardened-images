@@ -520,3 +520,47 @@ ignore:
   - vulnerability: ELSA-2026-500145
     package: { name: libgcrypt, version: "1.10.0-13.el9_8" }
     reason: "grype matches an OL9 FIPS-variant ELSA (el9_8_fips, epoch 10) against the non-FIPS build; not mirror-verified. Review 2026-11-05."
+
+  # 2026-11-14: RHEL 9.9/10.3 point-release fixes (el9_9/el10_3) not yet installable from Rocky/Alma/CentOS mirrors; builds already have the newest published packages.
+  - vulnerability: CVE-2026-107364
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112315
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112316
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112317
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112318
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112319
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112320
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112321
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112322
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-112323
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-118380
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-119079
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-53613
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-53615
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-66046
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-71199
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-71200
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-74860
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-77214
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-86140
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-93990
+    reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
