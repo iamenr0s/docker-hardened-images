@@ -564,3 +564,15 @@ ignore:
     reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
   - vulnerability: CVE-2026-93990
     reason: "Fixed only in RHEL 9.9/10.3 (el9_9/el10_3); not yet installable from rebuild mirrors. Review 2026-11-28."
+  - vulnerability: CVE-2026-19445
+    package: { name: python3, version: "3.9.25-10.el9" }
+    reason: "Fixed only in RHEL 9.9 (el9_9); CentOS Stream 9 mirror tops out at the installed version. Review 2026-11-28."
+  - vulnerability: CVE-2026-19445
+    package: { name: python3-libs, version: "3.9.25-10.el9" }
+    reason: "Fixed only in RHEL 9.9 (el9_9); CentOS Stream 9 mirror tops out at the installed version. Review 2026-11-28."
+  - vulnerability: CVE-2026-19553
+    package: { name: python3, version: "3.9.25-10.el9" }
+    reason: "Fixed only in RHEL 9.9 (el9_9); CentOS Stream 9 mirror tops out at the installed version. Review 2026-11-28."
+  - vulnerability: CVE-2026-19553
+    package: { name: python3-libs, version: "3.9.25-10.el9" }
+    reason: "Fixed only in RHEL 9.9 (el9_9); CentOS Stream 9 mirror tops out at the installed version. Review 2026-11-28."
