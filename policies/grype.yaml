@@ -515,8 +515,8 @@ ignore:
     package: { name: python3-libs, version: "3.12.15-1.el10" }
     reason: "Fix is RHEL-only (el9_N/el10_N); CentOS Stream mirror tops out at the installed version. Review 2026-11-05."
   - vulnerability: ELSA-2026-500448
-    package: { name: openssl-libs, version: "1:3.5.8-2.0.1.el9_8" }
-    reason: "grype matches an OL9 FIPS-variant ELSA (el9_8_fips, epoch 10) against the non-FIPS build; not mirror-verified. Review 2026-11-05."
+    package: { name: openssl-libs }
+    reason: "grype matches an OL9 FIPS-variant ELSA (el9_8_fips, epoch 10) against the non-FIPS build; not mirror-verified. Version unpinned 2026-11-22: OL9 moved to 3.5.9 el9_9, still newer than the 3.5.8 fips fix. Review 2026-12-06."
   - vulnerability: ELSA-2026-500145
     package: { name: libgcrypt, version: "1.10.0-13.el9_8" }
     reason: "grype matches an OL9 FIPS-variant ELSA (el9_8_fips, epoch 10) against the non-FIPS build; not mirror-verified. Review 2026-11-05."
@@ -576,3 +576,65 @@ ignore:
   - vulnerability: CVE-2026-19553
     package: { name: python3-libs, version: "3.9.25-10.el9" }
     reason: "Fixed only in RHEL 9.9 (el9_9); CentOS Stream 9 mirror tops out at the installed version. Review 2026-11-28."
+
+  # 2026-11-22: curl/libcurl fixes shipped only in RHEL 9.9/10.3 (el9_9/el10_3); CentOS Stream mirrors top out at the installed version. Version-pinned so Rocky/Alma, which do ship the fix, stay gated.
+  - vulnerability: CVE-2026-12064
+    package: { name: curl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-12064
+    package: { name: libcurl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-92392
+    package: { name: curl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-92392
+    package: { name: libcurl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8286
+    package: { name: curl, version: "7.76.1-44.el9" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8286
+    package: { name: curl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8286
+    package: { name: libcurl, version: "7.76.1-44.el9" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8286
+    package: { name: libcurl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8458
+    package: { name: curl, version: "7.76.1-44.el9" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8458
+    package: { name: curl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8458
+    package: { name: libcurl, version: "7.76.1-44.el9" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8458
+    package: { name: libcurl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8927
+    package: { name: curl, version: "7.76.1-44.el9" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8927
+    package: { name: curl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8927
+    package: { name: libcurl, version: "7.76.1-44.el9" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-8927
+    package: { name: libcurl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-9547
+    package: { name: curl, version: "7.76.1-44.el9" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-9547
+    package: { name: curl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-9547
+    package: { name: libcurl, version: "7.76.1-44.el9" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+  - vulnerability: CVE-2026-9547
+    package: { name: libcurl, version: "8.12.1-9.el10" }
+    reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
