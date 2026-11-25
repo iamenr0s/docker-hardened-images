@@ -23,4 +23,8 @@ jobs:
     # NOT compare digests against the previous release, so it assumes the
     # pinned build reproduces (reproducibility is not verified here).
     uses: ./.github/workflows/release.yml
-    secrets: inherit
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+      QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
