@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 # NOTE: no top-level concurrency here. release.yml's own
 # "release-publish" group applies when it runs as a reusable workflow,
@@ -22,6 +21,9 @@ jobs:
     # signatures/attestations fresh. Note: it re-pushes the tags; it does
     # NOT compare digests against the previous release, so it assumes the
     # pinned build reproduces (reproducibility is not verified here).
+    permissions:
+      contents: read
+      id-token: write   # keyless cosign signing in release.yml
     uses: ./.github/workflows/release.yml
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
