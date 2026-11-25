@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 env:
   GRYPE_VERSION: v0.115.0
@@ -15,6 +14,9 @@ env:
 jobs:
   rescan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     timeout-minutes: 15
     strategy:
       fail-fast: false

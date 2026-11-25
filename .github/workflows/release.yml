@@ -28,6 +28,11 @@ on:
       - ".github/workflows/update-snapshot.yml"
   workflow_dispatch:
   workflow_call:
+    secrets:
+      DOCKERHUB_USERNAME: { required: true }
+      DOCKERHUB_TOKEN: { required: true }
+      QUAY_USERNAME: { required: true }
+      QUAY_TOKEN: { required: true }
 
 permissions:
   contents: read

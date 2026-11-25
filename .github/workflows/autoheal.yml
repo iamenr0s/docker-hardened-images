@@ -3,10 +3,13 @@ name: autoheal
 # pin to *now* (update-snapshot only pins to yesterday-midnight, so same-day
 # upstream fixes are missed). Never merges, never edits CVE ignores — a human
 # reviews the PR; pr.yml proves whether the bump actually clears the gate.
+# Called by nightly.yml when its rebuild fails (replaces a workflow_run
+# trigger, which scanners flag as an insecure pattern).
 on:
-  workflow_run:
-    workflows: [nightly-rebuild]
-    types: [completed]
+  workflow_call:
+    secrets:
+      BOT_TOKEN:
+        required: false
   workflow_dispatch:
 
 permissions:
@@ -15,7 +18,6 @@ permissions:
 
 jobs:
   heal:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -39,6 +41,6 @@ jobs:
           commit-message: "fix: autoheal snapshot bump to ${{ steps.bump.outputs.snapshot }}"
           labels: dependencies, security
           body: |
-            Opened because nightly-rebuild failed (${{ github.event.workflow_run.html_url || 'manual run' }}).
+            Opened by ${{ github.workflow }} run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}.
             Bumps deb-family snapshots to the current time to pick up same-day
             upstream fixes. Review and merge manually once the pr checks pass.
