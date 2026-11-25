@@ -1,7 +1,7 @@
 name: Renovate auto-approve
 
 on:
-  pull_request_target:
+  pull_request:  # same-repo renovate branches get secrets; no _target needed
     types: [opened, synchronize, reopened]
 
 permissions:
