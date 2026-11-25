@@ -638,3 +638,11 @@ ignore:
   - vulnerability: CVE-2026-9547
     package: { name: libcurl, version: "8.12.1-9.el10" }
     reason: "Fixed only in RHEL (el9_9/el10_3); CentOS Stream mirror tops out at the installed version. Review 2026-12-06."
+
+  # 2026-11-24: sqlite-libs fixed in RHEL/Alma 8 (3.26.0-28.el8_10) but Rocky 8 baseos still tops out at 3.26.0-21.el8_10. Version-pinned so Alma 8 stays gated.
+  - vulnerability: CVE-2026-119373
+    package: { name: sqlite-libs, version: "3.26.0-21.el8_10" }
+    reason: "Fixed in RHEL 8 (3.26.0-28.el8_10); Rocky 8 mirror tops out at the installed version. Review 2026-12-08."
+  - vulnerability: CVE-2026-119586
+    package: { name: sqlite-libs, version: "3.26.0-21.el8_10" }
+    reason: "Fixed in RHEL 8 (3.26.0-28.el8_10); Rocky 8 mirror tops out at the installed version. Review 2026-12-08."
