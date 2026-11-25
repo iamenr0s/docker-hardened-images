@@ -28,3 +28,13 @@ jobs:
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
       QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
+
+  autoheal:
+    needs: rebuild
+    if: failure()
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/autoheal.yml
+    secrets:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
